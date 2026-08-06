@@ -2,7 +2,7 @@
 
 ## UA
 
-Мобільний застосунок для дітей із синдромом Дауна / аутизмом, що допомагає будувати змістовні фрази за допомогою карток "фото + записаний голос". Дитина торкається картки — програється голос рідної людини (або TTS, якщо голосу немає) і картка додається до "стрічки речення" зверху екрана.
+Мобільний застосунок для дітей, які мають труднощі зі спілкуванням, що допомагає будувати змістовні фрази за допомогою карток "фото + записаний голос". Дитина торкається картки — програється голос рідної людини (або TTS, якщо голосу немає) і картка додається до "стрічки речення" зверху екрана.
 
 ### Що є всередині
 
@@ -48,7 +48,7 @@ npx cap open android   # відкрити в Android Studio
 
 ## EN
 
-A mobile app for children with Down syndrome / autism that helps build meaningful phrases using picture cards paired with a recorded voice. The child taps a card — it plays the recorded voice of a familiar person (or falls back to text-to-speech) and the card is added to a "sentence strip" at the top of the screen.
+A mobile app for children who experience communication difficulties, that helps build meaningful phrases using picture cards paired with a recorded voice. The child taps a card — it plays the recorded voice of a familiar person (or falls back to text-to-speech) and the card is added to a "sentence strip" at the top of the screen.
 
 ### What's inside
 
