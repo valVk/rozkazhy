@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import SentenceStrip from "./components/SentenceStrip.vue";
+import PlayBar from "./components/PlayBar.vue";
 import CardGrid from "./components/CardGrid.vue";
 import PinLockScreen from "./components/PinLockScreen.vue";
 import SequencesPanel from "./components/SequencesPanel.vue";
@@ -21,6 +22,7 @@ const { saveCurrent } = useSequences();
 const { playCardAudio } = useAudioPlayback();
 
 const pinScreenVisible = ref(false);
+const isCompact = ref(false);
 
 onMounted(refresh);
 
@@ -77,13 +79,19 @@ function onPinCancel() {
 <template>
   <div id="app">
     <AppHeader @open-parent="onOpenParent" @open-sequences="onOpenSequences" />
-    <SentenceStrip
-      :cards="store.sentence"
+    <SentenceStrip :cards="store.sentence" :compact="isCompact" />
+    <PlayBar
+      :disabled="store.sentence.length === 0"
+      :compact="isCompact"
+      @save="onSaveSequence"
       @play="onPlaySentence"
       @clear="onClearSentence"
-      @save="onSaveSequence"
     />
-    <CardGrid :cards="cards" @tap="onCardTap" />
+    <CardGrid
+      :cards="cards"
+      @tap="onCardTap"
+      @compact="(v) => (isCompact = v)"
+    />
 
     <PinLockScreen
       v-if="pinScreenVisible"

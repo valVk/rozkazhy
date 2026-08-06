@@ -3,12 +3,7 @@ import { ref, watchEffect } from "vue";
 import type { Card } from "../types/card";
 import { resolveMediaUrl } from "../composables/mediaUrl";
 
-const props = defineProps<{ cards: Card[] }>();
-const emit = defineEmits<{
-  (e: "play"): void;
-  (e: "clear"): void;
-  (e: "save"): void;
-}>();
+const props = defineProps<{ cards: Card[]; compact: boolean }>();
 
 const urls = ref<(string | null)[]>([]);
 
@@ -20,7 +15,7 @@ watchEffect(async () => {
 </script>
 
 <template>
-  <div id="strip">
+  <div id="strip" :class="{ compact }">
     <div id="stripScroll">
       <div
         v-if="cards.length === 0"
@@ -36,35 +31,6 @@ watchEffect(async () => {
         <img v-if="urls[i]" :src="urls[i]!" :alt="card.title" />
       </div>
     </div>
-    <div class="strip-actions">
-      <button
-        id="saveStripBtn"
-        class="round-btn"
-        :disabled="cards.length === 0"
-        title="Зберегти послідовність"
-        @click="emit('save')"
-      >
-        💾
-      </button>
-      <button
-        id="playStripBtn"
-        class="round-btn"
-        :disabled="cards.length === 0"
-        title="Відтворити"
-        @click="emit('play')"
-      >
-        ▶
-      </button>
-      <button
-        id="clearStripBtn"
-        class="round-btn"
-        :disabled="cards.length === 0"
-        title="Очистити"
-        @click="emit('clear')"
-      >
-        🗑
-      </button>
-    </div>
   </div>
 </template>
 
@@ -73,19 +39,29 @@ watchEffect(async () => {
   flex-shrink: 0;
   background: white;
   border-bottom: 3px solid var(--teal);
-  padding: 10px;
+  padding: 6px 10px;
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: padding 0.25s ease;
+}
+#strip.compact {
+  padding: 2px 8px;
 }
 #stripScroll {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow-x: auto;
-  min-height: 70px;
+  min-height: 52px;
   align-items: center;
-  padding: 4px;
+  padding: 2px;
+  touch-action: pan-x;
+  -webkit-overflow-scrolling: touch;
+  transition: min-height 0.25s ease;
+}
+#strip.compact #stripScroll {
+  min-height: 30px;
 }
 .strip-empty-hint {
   color: var(--gray);
@@ -94,47 +70,27 @@ watchEffect(async () => {
 }
 .strip-item {
   flex-shrink: 0;
-  width: 64px;
-  height: 64px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   overflow: hidden;
   border: 2px solid var(--teal);
   position: relative;
   background: #fff;
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
+}
+#strip.compact .strip-item {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border-width: 1px;
 }
 .strip-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-}
-.strip-actions {
-  display: flex;
-  gap: 6px;
-  flex-shrink: 0;
-}
-.round-btn {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: none;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  cursor: pointer;
-}
-#saveStripBtn {
-  background: var(--teal);
-}
-#playStripBtn {
-  background: #4caf80;
-}
-#clearStripBtn {
-  background: var(--danger);
-}
-.round-btn:disabled {
-  opacity: 0.35;
 }
 </style>

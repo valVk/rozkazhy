@@ -1,13 +1,32 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import type { Card } from "../types/card";
 import CardTile from "./CardTile.vue";
 
 defineProps<{ cards: Card[] }>();
-const emit = defineEmits<{ (e: "tap", card: Card): void }>();
+const emit = defineEmits<{
+  (e: "tap", card: Card): void;
+  (e: "compact", value: boolean): void;
+}>();
+
+const isCompact = ref(false);
+const EXPAND_THRESHOLD = 6;
+const COMPACT_THRESHOLD = 32;
+
+function onScroll(e: Event) {
+  const scrollTop = (e.target as HTMLElement).scrollTop;
+  if (!isCompact.value && scrollTop > COMPACT_THRESHOLD) {
+    isCompact.value = true;
+    emit("compact", true);
+  } else if (isCompact.value && scrollTop <= EXPAND_THRESHOLD) {
+    isCompact.value = false;
+    emit("compact", false);
+  }
+}
 </script>
 
 <template>
-  <main>
+  <main @scroll="onScroll">
     <div v-if="cards.length" id="grid">
       <CardTile
         v-for="card in cards"
