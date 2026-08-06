@@ -88,19 +88,19 @@
 
 APK збирається автоматично при кожному релізі на GitHub (див. вкладку **Releases** цього репозиторію) і не проходить через Google Play — тому Android за замовчуванням блокує його встановлення як "додатку з невідомого джерела". Це нормально й безпечно, якщо ви завантажуєте APK з офіційних релізів цього репозиторію.
 
-1. На телефоні відкрийте сторінку **Releases** репозиторію в браузері та завантажте файл `app-debug.apk` з потрібного релізу.
+1. На телефоні відкрийте сторінку **Releases** репозиторію в браузері та завантажте файл `rozkazhy-<версія>.apk` з потрібного релізу (наприклад, `rozkazhy-1.2.0.apk` для релізу з тегом `v1.2.0` — версія береться з тегу релізу й одночасно проставляється в `package.json` та у версії Android-застосунку).
 2. Спробуйте відкрити завантажений файл (зазвичай через "Файли" або сповіщення про завантаження) — Android покаже попередження на кшталт "Заборонено встановлення з цього джерела".
 3. Натисніть **Налаштування** у цьому діалозі (або перейдіть вручну: **Налаштування → Застосунки → Особливий доступ → Встановлення невідомих застосунків**) і оберіть застосунок, яким ви відкривали APK (наприклад, "Файли" або браузер), увімкніть перемикач **Дозволити з цього джерела**.
 4. Поверніться назад і повторно відкрийте APK-файл — з'явиться стандартний діалог встановлення. Натисніть **Встановити**.
 5. Після встановлення можна вимкнути дозвіл із кроку 3, якщо не плануєте встановлювати оновлення вручну надалі.
 
-Це debug-збірка (не підписана для публікації), тому Android також може показати попередження про "неперевіреного розробника" — це очікувано для застосунків поза Google Play.
+Це підписана release-збірка (власним ключем, не через Google Play), тому Android все одно може показати попередження про "невідомого розробника" — це очікувано для застосунків поза Google Play, і не означає, що збірку не підписано.
 
 ### Технології
 
 - Vue 3 + TypeScript + Vite
 - Capacitor (нативна обгортка для Android): SQLite, Filesystem, Camera, Preferences, запис голосу
-- GitHub Actions збирає debug APK автоматично при публікації релізу на GitHub
+- GitHub Actions збирає підписаний release APK автоматично при публікації релізу на GitHub
 
 ### Структура репозиторію
 
@@ -214,19 +214,19 @@ Four tabs at the top (**➕ Add**, **🗂 Cards**, **📊 Dashboard**, **⚙️*
 
 The APK is built automatically on every GitHub release (see the **Releases** tab of this repo) and doesn't go through Google Play — so Android blocks installing it by default as an "app from an unknown source." That's expected and safe as long as you get the APK from this repo's official releases.
 
-1. On your phone, open this repo's **Releases** page in a browser and download `app-debug.apk` from the release you want.
+1. On your phone, open this repo's **Releases** page in a browser and download `rozkazhy-<version>.apk` from the release you want (e.g. `rozkazhy-1.2.0.apk` for a release tagged `v1.2.0` — the version comes from the release tag and is also stamped into `package.json` and the Android app's version).
 2. Try opening the downloaded file (usually via "Files" or the download notification) — Android will show a warning like "Install blocked" / "For your security, your phone is not allowed to install unknown apps from this source."
 3. Tap **Settings** in that dialog (or go manually: **Settings → Apps → Special app access → Install unknown apps**), select the app you opened the APK with (e.g. "Files" or your browser), and toggle **Allow from this source**.
 4. Go back and open the APK file again — the normal install dialog will appear. Tap **Install**.
 5. After installing, you can turn that permission back off if you don't plan to sideload updates manually going forward.
 
-This is a debug build (not signed for distribution), so Android may also show an "unverified developer" warning — expected for apps distributed outside Google Play.
+This is a release build signed with our own key (not through Google Play), so Android may still show an "unknown developer" warning — expected for apps distributed outside Google Play, and doesn't mean the build is unsigned.
 
 ### Tech stack
 
 - Vue 3 + TypeScript + Vite
 - Capacitor (native Android wrapper): SQLite, Filesystem, Camera, Preferences, voice recording
-- GitHub Actions builds a debug APK automatically whenever a GitHub release is published
+- GitHub Actions builds a signed release APK automatically whenever a GitHub release is published
 
 ### Repository layout
 
@@ -252,7 +252,9 @@ npx cap open android   # open in Android Studio
 
 ### Signing a release build
 
-See the workflow at `.github/workflows/build-apk.yml`. It currently builds an unsigned `assembleDebug` APK. To switch to a signed `assembleRelease` build, generate a keystore locally with `keytool`, add `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` as repo secrets, and update the workflow accordingly.
+CI builds a signed `assembleRelease` APK (see `.github/workflows/build-apk.yml`). Signing is driven by four repo secrets — `KEYSTORE_BASE64` (the keystore file, base64-encoded), `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` — decoded and passed as env vars during the build; `app/android/app/build.gradle` reads them via `signingConfigs.release`, which only activates when those env vars are present (so local/unsigned builds are unaffected). Rotate the keystore by generating a new one with `keytool`, re-encoding it (`base64 -i release.jks | tr -d '\n'`), and updating the secrets — but note this changes the app's signing identity, so it can never be used to update an existing installed release built with the old key.
+
+The build's version comes from the GitHub release tag (`v1.2.0` → app version `1.2.0`; a leading `v` is stripped). The workflow writes that version into `package.json` and passes it to Gradle as `versionName`, while `versionCode` is set to the GitHub Actions run number (a monotonically increasing integer, satisfying Android's requirement that each published `versionCode` be higher than the last). Manual `workflow_dispatch` runs (no release tag) fall back to whatever version is currently in `package.json`. The output APK is named `rozkazhy-<version>.apk`.
 
 ### License
 

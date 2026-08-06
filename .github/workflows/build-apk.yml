@@ -33,6 +33,20 @@ jobs:
           java-version: 21
           cache: gradle
 
+      - name: Determine version
+        id: version
+        run: |
+          RAW_TAG="${{ github.event.release.tag_name }}"
+          if [ -n "$RAW_TAG" ]; then
+            VERSION="${RAW_TAG#v}"
+          else
+            VERSION=$(node -p "require('./package.json').version")
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Set package.json version
+        run: npm version "${{ steps.version.outputs.version }}" --no-git-tag-version --allow-same-version
+
       - name: Install dependencies
         run: npm ci
 
@@ -54,6 +68,8 @@ jobs:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          APP_VERSION_NAME: ${{ steps.version.outputs.version }}
+          APP_VERSION_CODE: ${{ github.run_number }}
         run: |
           chmod +x gradlew
           export KEYSTORE_FILE="$(pwd)/release.keystore"
@@ -64,13 +80,17 @@ jobs:
         working-directory: app/android
         run: rm -f release.keystore
 
+      - name: Rename APK with version
+        working-directory: app/android/app/build/outputs/apk/release
+        run: mv app-release.apk "rozkazhy-${{ steps.version.outputs.version }}.apk"
+
       - name: Upload APK to release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/android/app/build/outputs/apk/release/app-release.apk
+          files: app/android/app/build/outputs/apk/release/rozkazhy-${{ steps.version.outputs.version }}.apk
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: app/android/app/build/outputs/apk/release/app-release.apk
+          name: rozkazhy-${{ steps.version.outputs.version }}-apk
+          path: app/android/app/build/outputs/apk/release/rozkazhy-${{ steps.version.outputs.version }}.apk
