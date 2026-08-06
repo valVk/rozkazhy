@@ -42,19 +42,35 @@ jobs:
       - name: Sync Capacitor Android project
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Decode signing keystore
         working-directory: app/android
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: echo "$KEYSTORE_BASE64" | base64 -d > release.keystore
+
+      - name: Build signed release APK
+        working-directory: app/android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug
+          export KEYSTORE_FILE="$(pwd)/release.keystore"
+          ./gradlew assembleRelease
+
+      - name: Remove decoded keystore
+        if: always()
+        working-directory: app/android
+        run: rm -f release.keystore
 
       - name: Upload APK to release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/android/app/build/outputs/apk/debug/app-debug.apk
+          files: app/android/app/build/outputs/apk/release/app-release.apk
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/android/app/build/outputs/apk/debug/app-debug.apk
+          name: app-release-apk
+          path: app/android/app/build/outputs/apk/release/app-release.apk
