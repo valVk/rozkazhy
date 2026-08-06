@@ -16,6 +16,18 @@
   - Налаштування: поріг автоматичного улюбленого для послідовностей
 - Дані та медіафайли (фото/аудіо) зберігаються локально на пристрої — SQLite для записів, окремі файли для фото та аудіо. Немає хмарної синхронізації.
 
+### Встановлення APK (застосунок не публікується в Google Play)
+
+APK збирається автоматично при кожному релізі на GitHub (див. вкладку **Releases** цього репозиторію) і не проходить через Google Play — тому Android за замовчуванням блокує його встановлення як "додатку з невідомого джерела". Це нормально й безпечно, якщо ви завантажуєте APK з офіційних релізів цього репозиторію.
+
+1. На телефоні відкрийте сторінку **Releases** репозиторію в браузері та завантажте файл `app-debug.apk` з потрібного релізу.
+2. Спробуйте відкрити завантажений файл (зазвичай через "Файли" або сповіщення про завантаження) — Android покаже попередження на кшталт "Заборонено встановлення з цього джерела".
+3. Натисніть **Налаштування** у цьому діалозі (або перейдіть вручну: **Налаштування → Застосунки → Особливий доступ → Встановлення невідомих застосунків**) і оберіть застосунок, яким ви відкривали APK (наприклад, "Файли" або браузер), увімкніть перемикач **Дозволити з цього джерела**.
+4. Поверніться назад і повторно відкрийте APK-файл — з'явиться стандартний діалог встановлення. Натисніть **Встановити**.
+5. Після встановлення можна вимкнути дозвіл із кроку 3, якщо не плануєте встановлювати оновлення вручну надалі.
+
+Це debug-збірка (не підписана для публікації), тому Android також може показати попередження про "неперевіреного розробника" — це очікувано для застосунків поза Google Play.
+
 ### Технології
 
 - Vue 3 + TypeScript + Vite
@@ -44,18 +56,6 @@ npx cap sync android   # синхронізація в нативний Android-
 npx cap open android   # відкрити в Android Studio
 ```
 
-### Встановлення APK (застосунок не публікується в Google Play)
-
-APK збирається автоматично при кожному релізі на GitHub (див. вкладку **Releases** цього репозиторію) і не проходить через Google Play — тому Android за замовчуванням блокує його встановлення як "додатку з невідомого джерела". Це нормально й безпечно, якщо ви завантажуєте APK з офіційних релізів цього репозиторію.
-
-1. На телефоні відкрийте сторінку **Releases** репозиторію в браузері та завантажте файл `app-debug.apk` з потрібного релізу.
-2. Спробуйте відкрити завантажений файл (зазвичай через "Файли" або сповіщення про завантаження) — Android покаже попередження на кшталт "Заборонено встановлення з цього джерела".
-3. Натисніть **Налаштування** у цьому діалозі (або перейдіть вручну: **Налаштування → Застосунки → Особливий доступ → Встановлення невідомих застосунків**) і оберіть застосунок, яким ви відкривали APK (наприклад, "Файли" або браузер), увімкніть перемикач **Дозволити з цього джерела**.
-4. Поверніться назад і повторно відкрийте APK-файл — з'явиться стандартний діалог встановлення. Натисніть **Встановити**.
-5. Після встановлення можна вимкнути дозвіл із кроку 3, якщо не плануєте встановлювати оновлення вручну надалі.
-
-Це debug-збірка (не підписана для публікації), тому Android також може показати попередження про "неперевіреного розробника" — це очікувано для застосунків поза Google Play.
-
 ---
 
 ## EN
@@ -73,6 +73,18 @@ A mobile app for children who experience communication difficulties, that helps 
   - Dashboard: most-tapped words, last 20 played sentences
   - Settings: auto-favorite threshold for sequences
 - All data and media (photos/audio) live on-device — SQLite for records, separate files for photos and audio. No cloud sync.
+
+### Installing the APK (the app is not on Google Play)
+
+The APK is built automatically on every GitHub release (see the **Releases** tab of this repo) and doesn't go through Google Play — so Android blocks installing it by default as an "app from an unknown source." That's expected and safe as long as you get the APK from this repo's official releases.
+
+1. On your phone, open this repo's **Releases** page in a browser and download `app-debug.apk` from the release you want.
+2. Try opening the downloaded file (usually via "Files" or the download notification) — Android will show a warning like "Install blocked" / "For your security, your phone is not allowed to install unknown apps from this source."
+3. Tap **Settings** in that dialog (or go manually: **Settings → Apps → Special app access → Install unknown apps**), select the app you opened the APK with (e.g. "Files" or your browser), and toggle **Allow from this source**.
+4. Go back and open the APK file again — the normal install dialog will appear. Tap **Install**.
+5. After installing, you can turn that permission back off if you don't plan to sideload updates manually going forward.
+
+This is a debug build (not signed for distribution), so Android may also show an "unverified developer" warning — expected for apps distributed outside Google Play.
 
 ### Tech stack
 
@@ -101,18 +113,6 @@ npm run build         # build + typecheck
 npx cap sync android   # sync into the native Android project
 npx cap open android   # open in Android Studio
 ```
-
-### Installing the APK (the app is not on Google Play)
-
-The APK is built automatically on every GitHub release (see the **Releases** tab of this repo) and doesn't go through Google Play — so Android blocks installing it by default as an "app from an unknown source." That's expected and safe as long as you get the APK from this repo's official releases.
-
-1. On your phone, open this repo's **Releases** page in a browser and download `app-debug.apk` from the release you want.
-2. Try opening the downloaded file (usually via "Files" or the download notification) — Android will show a warning like "Install blocked" / "For your security, your phone is not allowed to install unknown apps from this source."
-3. Tap **Settings** in that dialog (or go manually: **Settings → Apps → Special app access → Install unknown apps**), select the app you opened the APK with (e.g. "Files" or your browser), and toggle **Allow from this source**.
-4. Go back and open the APK file again — the normal install dialog will appear. Tap **Install**.
-5. After installing, you can turn that permission back off if you don't plan to sideload updates manually going forward.
-
-This is a debug build (not signed for distribution), so Android may also show an "unverified developer" warning — expected for apps distributed outside Google Play.
 
 ### Signing a release build
 
