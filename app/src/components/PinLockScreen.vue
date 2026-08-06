@@ -96,7 +96,7 @@ async function handleComplete() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
   text-align: center;
 }
 #pinDots {

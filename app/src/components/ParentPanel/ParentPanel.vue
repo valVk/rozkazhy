@@ -87,7 +87,7 @@ function onSaved() {
   max-height: 92vh;
   overflow-y: auto;
   border-radius: 26px 26px 0 0;
-  padding: 20px;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 }
 .sheet-close {
   position: sticky;

@@ -27,7 +27,7 @@ const emit = defineEmits<{ (e: "tap", card: Card): void }>();
 main {
   flex: 1;
   overflow-y: auto;
-  padding: 14px;
+  padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
 }
 #grid {
   display: grid;

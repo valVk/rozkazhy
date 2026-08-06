@@ -48,7 +48,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 16px;
+  padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
   background: var(--pink);
   color: white;
   flex-shrink: 0;
