@@ -1,0 +1,26 @@
+{
+  "name": "Розкажи — картки для спілкування",
+  "short_name": "Розкажи",
+  "description": "Простий додаток альтернативної комунікації для дитини: картки з фото, голос рідної людини та побудова речень.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FEF6E4",
+  "theme_color": "#F582AE",
+  "lang": "uk",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

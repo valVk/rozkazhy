@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Розкажи — картки для спілкування</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#F582AE">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Розкажи">
+<style>
+  :root{
+    --pink:#F582AE;
+    --cream:#FEF6E4;
+    --teal:#8BD3DD;
+    --yellow:#FFD803;
+    --dark:#2b2b3d;
+    --gray:#8a8a9a;
+    --danger:#e0576b;
+    --radius:22px;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--cream);
+    color:var(--dark);
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior:none;
+  }
+  button{font-family:inherit;}
+  #app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+
+  /* ---------- TOP BAR ---------- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px;background:var(--pink);color:white;
+    flex-shrink:0;
+  }
+  header h1{font-size:20px;margin:0;font-weight:800;}
+  #gearBtn{
+    width:46px;height:46px;border-radius:50%;border:none;
+    background:rgba(255,255,255,.25);color:white;font-size:22px;
+    display:flex;align-items:center;justify-content:center;
+    -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+    touch-action:manipulation;
+  }
+  .card, .card img{
+    -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;
+  }
+
+  /* ---------- SENTENCE STRIP ---------- */
+  #strip{
+    flex-shrink:0;
+    background:white;
+    border-bottom:3px solid var(--teal);
+    padding:10px 10px 10px 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  #stripScroll{
+    flex:1;display:flex;gap:8px;overflow-x:auto;
+    min-height:70px;align-items:center;padding:4px;
+  }
+  #stripScroll:empty::after{
+    content:"Торкніться картки, щоб почати 👇";
+    color:var(--gray);font-size:15px;padding-left:6px;
+  }
+  .strip-item{
+    flex-shrink:0;width:64px;height:64px;border-radius:14px;
+    overflow:hidden;border:2px solid var(--teal);position:relative;
+    background:#fff;
+  }
+  .strip-item img{width:100%;height:100%;object-fit:cover;display:block;}
+  .strip-actions{display:flex;gap:6px;flex-shrink:0;}
+  .round-btn{
+    width:56px;height:56px;border-radius:50%;border:none;
+    font-size:24px;display:flex;align-items:center;justify-content:center;
+    color:white;
+  }
+  #playStripBtn{background:#4CAF80;}
+  #clearStripBtn{background:var(--danger);}
+  .round-btn:disabled{opacity:.35;}
+
+  /* ---------- GRID ---------- */
+  main{
+    flex:1;overflow-y:auto;padding:14px;
+  }
+  #grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+    gap:14px;
+  }
+  .card{
+    background:white;border-radius:var(--radius);
+    box-shadow:0 3px 10px rgba(0,0,0,.08);
+    overflow:hidden;border:none;padding:0;
+    display:flex;flex-direction:column;
+    cursor:pointer;user-select:none;
+    transition:transform .08s ease;
+  }
+  .card:active{transform:scale(.94);}
+  .card .thumb{
+    width:100%;aspect-ratio:1/1;object-fit:cover;background:#eee;
+    display:block;
+  }
+  .card .label{
+    padding:8px 6px;text-align:center;font-weight:700;font-size:16px;
+    color:var(--dark);
+  }
+  .card.active-glow{outline:4px solid var(--yellow);}
+
+  #emptyState{
+    text-align:center;color:var(--gray);margin-top:60px;font-size:17px;line-height:1.6;
+  }
+
+  /* ---------- OVERLAY / MODALS ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,20,30,.55);
+    display:flex;align-items:flex-end;justify-content:center;
+    z-index:50;
+  }
+  .overlay.hidden{display:none;}
+  .sheet{
+    background:var(--cream);width:100%;max-width:520px;
+    max-height:92vh;overflow-y:auto;
+    border-radius:26px 26px 0 0;padding:20px;
+    animation:slideUp .2s ease-out;
+  }
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .sheet h2{margin-top:0;font-size:20px;}
+  .sheet-close{
+    position:sticky;top:0;float:right;background:none;border:none;
+    font-size:26px;color:var(--gray);
+  }
+  .tabs{display:flex;gap:8px;margin-bottom:16px;}
+  .tab-btn{
+    flex:1;padding:10px;border-radius:14px;border:none;
+    background:#fff;color:var(--dark);font-weight:700;font-size:14px;
+  }
+  .tab-btn.active{background:var(--pink);color:white;}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  label.field-label{display:block;font-weight:700;margin:14px 0 6px;font-size:15px;}
+  input[type=text]{
+    width:100%;padding:14px;border-radius:14px;border:2px solid #ddd;
+    font-size:17px;background:white;
+  }
+  .btn{
+    padding:14px 18px;border-radius:16px;border:none;font-weight:700;
+    font-size:16px;display:inline-flex;align-items:center;gap:8px;
+    justify-content:center;
+  }
+  .btn-primary{background:var(--pink);color:white;width:100%;margin-top:16px;}
+  .btn-secondary{background:white;color:var(--dark);border:2px solid #ddd;}
+  .btn-danger{background:var(--danger);color:white;}
+  .btn-block{width:100%;}
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;}
+
+  #photoPreviewWrap{
+    width:100%;aspect-ratio:1/1;border-radius:18px;background:#eee;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+    margin-top:10px;color:var(--gray);font-size:15px;text-align:center;
+  }
+  #photoPreviewWrap img{width:100%;height:100%;object-fit:cover;}
+
+  #recordBtn.recording{background:var(--danger);}
+  #recStatus{font-size:14px;color:var(--gray);margin-top:8px;min-height:20px;}
+  audio{width:100%;margin-top:8px;}
+
+  .card-list-item{
+    display:flex;align-items:center;gap:12px;background:white;
+    border-radius:16px;padding:10px;margin-bottom:10px;
+  }
+  .card-list-item img{width:56px;height:56px;object-fit:cover;border-radius:10px;flex-shrink:0;}
+  .card-list-item .word{flex:1;font-weight:700;font-size:16px;}
+  .icon-btn{
+    width:40px;height:40px;border-radius:50%;border:none;
+    background:#f2f2f2;font-size:18px;
+  }
+
+  .stat-row{
+    display:flex;justify-content:space-between;align-items:center;
+    background:white;border-radius:14px;padding:12px 14px;margin-bottom:8px;
+  }
+  .stat-row .count{
+    background:var(--teal);color:white;font-weight:800;
+    border-radius:12px;padding:4px 10px;font-size:14px;min-width:28px;text-align:center;
+  }
+  .log-entry{
+    background:white;border-radius:14px;padding:10px 14px;margin-bottom:8px;font-size:15px;
+  }
+  .log-entry .time{color:var(--gray);font-size:12px;display:block;margin-bottom:4px;}
+
+  #pinScreen{
+    position:fixed;inset:0;background:var(--cream);z-index:60;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:20px;text-align:center;
+  }
+  #pinScreen.hidden{display:none;}
+  #pinDots{display:flex;gap:14px;margin:20px 0;}
+  .pin-dot{width:18px;height:18px;border-radius:50%;background:#ddd;}
+  .pin-dot.filled{background:var(--pink);}
+  #pinPad{display:grid;grid-template-columns:repeat(3,72px);gap:14px;}
+  #pinPad button{
+    width:72px;height:72px;border-radius:50%;border:none;background:white;
+    font-size:24px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.1);
+  }
+  #pinHint{color:var(--gray);font-size:13px;margin-top:16px;max-width:300px;}
+
+  .toast{
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+    background:var(--dark);color:white;padding:12px 20px;border-radius:14px;
+    font-size:14px;z-index:100;opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>👋 Розкажи</h1>
+    <button id="gearBtn" aria-label="Налаштування (для дорослих)">⚙️</button>
+  </header>
+
+  <div id="strip">
+    <div id="stripScroll"></div>
+    <div class="strip-actions">
+      <button id="playStripBtn" class="round-btn" disabled title="Відтворити">▶</button>
+      <button id="clearStripBtn" class="round-btn" disabled title="Очистити">🗑</button>
+    </div>
+  </div>
+
+  <main>
+    <div id="grid"></div>
+    <div id="emptyState" style="display:none;">
+      Поки немає жодної картки.<br>
+      Дорослий може додати їх, довго натиснувши ⚙️ у верхньому кутку.
+    </div>
+  </main>
+</div>
+
+<!-- PARENT MODE PIN SCREEN -->
+<div id="pinScreen" class="hidden">
+  <h2>Режим для дорослих</h2>
+  <p id="pinPrompt">Введіть 4 цифри</p>
+  <div id="pinDots"></div>
+  <div id="pinPad"></div>
+  <button id="pinCancel" class="btn btn-secondary" style="margin-top:20px;">Скасувати</button>
+  <p id="pinHint"></p>
+</div>
+
+<!-- PARENT PANEL -->
+<div id="parentOverlay" class="overlay hidden">
+  <div class="sheet">
+    <button class="sheet-close" id="closeParent">✕</button>
+    <h2>Панель дорослого</h2>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="add">➕ Додати</button>
+      <button class="tab-btn" data-tab="manage">🗂 Картки</button>
+      <button class="tab-btn" data-tab="dashboard">📊 Дашборд</button>
+    </div>
+
+    <!-- ADD TAB -->
+    <div class="tab-panel active" id="tab-add">
+      <label class="field-label">Фото предмета</label>
+      <div id="photoPreviewWrap">Немає фото</div>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn btn-secondary" id="takePhotoBtn">📷 Камера</button>
+        <button class="btn btn-secondary" id="choosePhotoBtn">🖼 Галерея</button>
+      </div>
+      <input type="file" id="photoInputCamera" accept="image/*" capture="environment" style="display:none;">
+      <input type="file" id="photoInputGallery" accept="image/*" style="display:none;">
+
+      <label class="field-label">Слово або фраза</label>
+      <input type="text" id="wordInput" placeholder="Наприклад: ложка">
+
+      <label class="field-label">Голос дорослого</label>
+      <div class="row">
+        <button class="btn btn-secondary" id="recordBtn">🎙 Записати</button>
+        <button class="btn btn-secondary" id="chooseAudioBtn">📁 Файл</button>
+      </div>
+      <input type="file" id="audioInputFile" accept="audio/*" style="display:none;">
+      <div id="recStatus"></div>
+      <audio id="recPreview" controls style="display:none;"></audio>
+
+      <button class="btn btn-primary" id="saveCardBtn">💾 Зберегти картку</button>
+    </div>
+
+    <!-- MANAGE TAB -->
+    <div class="tab-panel" id="tab-manage">
+      <div id="manageList"></div>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div class="tab-panel" id="tab-dashboard">
+      <h3 style="margin-top:0;">Найчастіші слова</h3>
+      <div id="statsList"></div>
+      <h3>Останні речення</h3>
+      <div id="logList"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================== INDEXEDDB LAYER ================== */
+const DB_NAME = 'aac_app_db';
+const DB_VERSION = 1;
+let db;
+
+function openDB(){
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const _db = e.target.result;
+      if(!_db.objectStoreNames.contains('cards')){
+        const store = _db.createObjectStore('cards', {keyPath:'id', autoIncrement:true});
+        store.createIndex('word','word');
+      }
+      if(!_db.objectStoreNames.contains('logs')){
+        _db.createObjectStore('logs', {keyPath:'id', autoIncrement:true});
+      }
+      if(!_db.objectStoreNames.contains('meta')){
+        _db.createObjectStore('meta', {keyPath:'key'});
+      }
+    };
+    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+    req.onerror = (e) => reject(e);
+  });
+}
+
+function tx(store, mode='readonly'){
+  return db.transaction(store, mode).objectStore(store);
+}
+
+function addCard(card){
+  return new Promise((resolve,reject)=>{
+    const req = tx('cards','readwrite').add(card);
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = (e)=>reject(e);
+  });
+}
+function updateCard(card){
+  return new Promise((resolve,reject)=>{
+    const req = tx('cards','readwrite').put(card);
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = (e)=>reject(e);
+  });
+}
+function deleteCard(id){
+  return new Promise((resolve,reject)=>{
+    const req = tx('cards','readwrite').delete(id);
+    req.onsuccess = ()=>resolve();
+    req.onerror = (e)=>reject(e);
+  });
+}
+function getAllCards(){
+  return new Promise((resolve,reject)=>{
+    const req = tx('cards').getAll();
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = (e)=>reject(e);
+  });
+}
+function addLog(entry){
+  return new Promise((resolve,reject)=>{
+    const req = tx('logs','readwrite').add(entry);
+    req.onsuccess = async ()=>{
+      // keep only last 100 logs
+      const all = await getAllLogs();
+      if(all.length > 100){
+        const excess = all.slice(0, all.length-100);
+        const s = tx('logs','readwrite');
+        excess.forEach(l=>s.delete(l.id));
+      }
+      resolve(req.result);
+    };
+    req.onerror = (e)=>reject(e);
+  });
+}
+function getAllLogs(){
+  return new Promise((resolve,reject)=>{
+    const req = tx('logs').getAll();
+    req.onsuccess = ()=>resolve(req.result);
+    req.onerror = (e)=>reject(e);
+  });
+}
+
+/* ================== STATE ================== */
+let cards = [];
+let sentence = []; // array of card objects currently in strip
+let pendingPhotoDataURL = null;
+let pendingAudioDataURL = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+let editingCardId = null;
+
+/* ================== INIT ================== */
+async function init(){
+  await openDB();
+  cards = await getAllCards();
+  renderGrid();
+  bindEvents();
+}
+init();
+
+/* ================== RENDER GRID ================== */
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = '';
+  if(cards.length === 0){
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  cards.forEach(card=>{
+    const el = document.createElement('button');
+    el.className = 'card';
+    el.innerHTML = `
+      <img class="thumb" src="${card.image}" alt="${escapeHtml(card.word)}">
+      <div class="label">${escapeHtml(card.word)}</div>
+    `;
+    el.addEventListener('click', ()=>onCardTap(card, el));
+    grid.appendChild(el);
+  });
+}
+
+function escapeHtml(s){
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+/* ================== CARD TAP -> STRIP + SPEAK ================== */
+async function onCardTap(card, el){
+  el.classList.add('active-glow');
+  setTimeout(()=>el.classList.remove('active-glow'), 400);
+
+  sentence.push(card);
+  renderStrip();
+  await playCardAudio(card);
+
+  // update tap count
+  card.tapCount = (card.tapCount||0) + 1;
+  updateCard(card);
+}
+
+function playCardAudio(card){
+  return new Promise((resolve)=>{
+    if(card.audio){
+      const audio = new Audio(card.audio);
+      audio.onended = resolve;
+      audio.onerror = resolve;
+      audio.play().catch(resolve);
+    } else if('speechSynthesis' in window){
+      const u = new SpeechSynthesisUtterance(card.word);
+      u.lang = 'uk-UA';
+      u.onend = resolve;
+      u.onerror = resolve;
+      speechSynthesis.speak(u);
+    } else {
+      resolve();
+    }
+  });
+}
+
+/* ================== SENTENCE STRIP ================== */
+function renderStrip(){
+  const wrap = document.getElementById('stripScroll');
+  wrap.innerHTML = '';
+  sentence.forEach(card=>{
+    const d = document.createElement('div');
+    d.className = 'strip-item';
+    d.innerHTML = `<img src="${card.image}" alt="${escapeHtml(card.word)}">`;
+    wrap.appendChild(d);
+  });
+  wrap.scrollLeft = wrap.scrollWidth;
+  document.getElementById('playStripBtn').disabled = sentence.length===0;
+  document.getElementById('clearStripBtn').disabled = sentence.length===0;
+}
+
+async function playSentence(){
+  for(const card of sentence){
+    await playCardAudio(card);
+    await new Promise(r=>setTimeout(r,150));
+  }
+  if(sentence.length){
+    addLog({
+      words: sentence.map(c=>c.word),
+      ts: Date.now()
+    });
+  }
+}
+
+/* ================== PARENT MODE / PIN ================== */
+const PIN_KEY = 'aac_parent_pin';
+let pinBuffer = '';
+let pinTargetAction = null;
+
+function getStoredPin(){
+  return localStorage.getItem(PIN_KEY);
+}
+function setStoredPin(pin){
+  localStorage.setItem(PIN_KEY, pin);
+}
+
+function openPinScreen(action){
+  pinTargetAction = action;
+  pinBuffer = '';
+  const stored = getStoredPin();
+  const prompt = document.getElementById('pinPrompt');
+  const hint = document.getElementById('pinHint');
+  if(!stored){
+    prompt.textContent = 'Створіть 4-значний PIN для дорослих';
+    hint.textContent = 'Цей код буде потрібен щоразу, щоб відкрити панель дорослого. Запам\'ятайте його.';
+  } else {
+    prompt.textContent = 'Введіть PIN';
+    hint.textContent = '';
+  }
+  renderPinDots();
+  document.getElementById('pinScreen').classList.remove('hidden');
+}
+
+function renderPinDots(){
+  const dots = document.getElementById('pinDots');
+  dots.innerHTML = '';
+  for(let i=0;i<4;i++){
+    const d = document.createElement('div');
+    d.className = 'pin-dot' + (i < pinBuffer.length ? ' filled':'');
+    dots.appendChild(d);
+  }
+}
+
+function buildPinPad(){
+  const pad = document.getElementById('pinPad');
+  pad.innerHTML = '';
+  const keys = ['1','2','3','4','5','6','7','8','9','','0','⌫'];
+  keys.forEach(k=>{
+    const b = document.createElement('button');
+    b.textContent = k;
+    if(k===''){ b.style.visibility='hidden'; }
+    b.addEventListener('click', ()=>{
+      if(k==='⌫'){ pinBuffer = pinBuffer.slice(0,-1); renderPinDots(); return; }
+      if(k==='') return;
+      if(pinBuffer.length<4){
+        pinBuffer += k;
+        renderPinDots();
+        if(pinBuffer.length===4) handlePinComplete();
+      }
+    });
+    pad.appendChild(b);
+  });
+}
+buildPinPad();
+
+function handlePinComplete(){
+  const stored = getStoredPin();
+  if(!stored){
+    setStoredPin(pinBuffer);
+    closePinScreen();
+    openParentPanel();
+    return;
+  }
+  if(pinBuffer === stored){
+    closePinScreen();
+    openParentPanel();
+  } else {
+    showToast('Невірний PIN');
+    pinBuffer='';
+    renderPinDots();
+  }
+}
+
+function closePinScreen(){
+  document.getElementById('pinScreen').classList.add('hidden');
+}
+
+/* long-press on gear icon */
+let pressTimer = null;
+function bindGearLongPress(){
+  const gear = document.getElementById('gearBtn');
+  const start = (e)=>{
+    e.preventDefault();
+    pressTimer = setTimeout(()=>openPinScreen('open'), 700);
+  };
+  const cancel = ()=>{ clearTimeout(pressTimer); };
+  gear.addEventListener('mousedown', start);
+  gear.addEventListener('touchstart', start, {passive:false});
+  gear.addEventListener('contextmenu', (e)=>e.preventDefault());
+  ['mouseup','mouseleave','touchend','touchcancel'].forEach(ev=>gear.addEventListener(ev, cancel));
+}
+
+/* ================== PARENT PANEL ================== */
+function openParentPanel(){
+  document.getElementById('parentOverlay').classList.remove('hidden');
+  resetAddForm();
+  renderManageList();
+  renderDashboard();
+}
+function closeParentPanel(){
+  document.getElementById('parentOverlay').classList.add('hidden');
+  stopRecordingIfActive();
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id==='tab-'+name));
+  if(name==='manage') renderManageList();
+  if(name==='dashboard') renderDashboard();
+}
+
+/* ---- ADD FORM ---- */
+function resetAddForm(){
+  editingCardId = null;
+  pendingPhotoDataURL = null;
+  pendingAudioDataURL = null;
+  document.getElementById('photoPreviewWrap').innerHTML = 'Немає фото';
+  document.getElementById('wordInput').value = '';
+  document.getElementById('recPreview').style.display='none';
+  document.getElementById('recStatus').textContent = '';
+  document.getElementById('saveCardBtn').textContent = '💾 Зберегти картку';
+}
+
+function handlePhotoFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    pendingPhotoDataURL = e.target.result;
+    document.getElementById('photoPreviewWrap').innerHTML = `<img src="${pendingPhotoDataURL}">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function toggleRecording(){
+  const btn = document.getElementById('recordBtn');
+  if(mediaRecorder && mediaRecorder.state === 'recording'){
+    mediaRecorder.stop();
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (e)=>{ if(e.data.size>0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = ()=>{
+      const blob = new Blob(recordedChunks, {type:'audio/webm'});
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        pendingAudioDataURL = e.target.result;
+        const preview = document.getElementById('recPreview');
+        preview.src = pendingAudioDataURL;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(blob);
+      stream.getTracks().forEach(t=>t.stop());
+      btn.textContent = '🎙 Перезаписати';
+      btn.classList.remove('recording');
+      document.getElementById('recStatus').textContent = 'Запис збережено ✓';
+    };
+    mediaRecorder.start();
+    btn.textContent = '⏹ Зупинити запис';
+    btn.classList.add('recording');
+    document.getElementById('recStatus').textContent = 'Йде запис… 🔴';
+  }catch(err){
+    showToast('Немає доступу до мікрофона');
+  }
+}
+function stopRecordingIfActive(){
+  if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+}
+
+function handleAudioFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    pendingAudioDataURL = e.target.result;
+    const preview = document.getElementById('recPreview');
+    preview.src = pendingAudioDataURL;
+    preview.style.display = 'block';
+    document.getElementById('recStatus').textContent = 'Аудіофайл додано ✓';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveCard(){
+  const word = document.getElementById('wordInput').value.trim();
+  if(!word){ showToast('Введіть слово'); return; }
+  if(!pendingPhotoDataURL && !editingCardId){ showToast('Додайте фото'); return; }
+
+  if(editingCardId){
+    const existing = cards.find(c=>c.id===editingCardId);
+    existing.word = word;
+    if(pendingPhotoDataURL) existing.image = pendingPhotoDataURL;
+    if(pendingAudioDataURL) existing.audio = pendingAudioDataURL;
+    await updateCard(existing);
+    showToast('Картку оновлено ✓');
+  } else {
+    const card = {
+      word,
+      image: pendingPhotoDataURL,
+      audio: pendingAudioDataURL || null,
+      tapCount: 0,
+      createdAt: Date.now()
+    };
+    const id = await addCard(card);
+    card.id = id;
+    cards.push(card);
+    showToast('Картку додано ✓');
+  }
+  cards = await getAllCards();
+  renderGrid();
+  resetAddForm();
+  switchTab('manage');
+}
+
+/* ---- MANAGE TAB ---- */
+function renderManageList(){
+  const list = document.getElementById('manageList');
+  list.innerHTML = '';
+  if(cards.length===0){
+    list.innerHTML = '<p style="color:var(--gray)">Ще немає карток.</p>';
+    return;
+  }
+  cards.forEach(card=>{
+    const row = document.createElement('div');
+    row.className = 'card-list-item';
+    row.innerHTML = `
+      <img src="${card.image}">
+      <div class="word">${escapeHtml(card.word)}</div>
+      <button class="icon-btn" data-act="edit">✏️</button>
+      <button class="icon-btn" data-act="del">🗑</button>
+    `;
+    row.querySelector('[data-act="edit"]').addEventListener('click', ()=>startEditCard(card));
+    row.querySelector('[data-act="del"]').addEventListener('click', ()=>confirmDeleteCard(card));
+    list.appendChild(row);
+  });
+}
+
+function startEditCard(card){
+  editingCardId = card.id;
+  pendingPhotoDataURL = null;
+  pendingAudioDataURL = null;
+  document.getElementById('wordInput').value = card.word;
+  document.getElementById('photoPreviewWrap').innerHTML = `<img src="${card.image}">`;
+  if(card.audio){
+    const preview = document.getElementById('recPreview');
+    preview.src = card.audio;
+    preview.style.display = 'block';
+  }
+  document.getElementById('saveCardBtn').textContent = '💾 Зберегти зміни';
+  switchTab('add');
+}
+
+async function confirmDeleteCard(card){
+  if(!confirm(`Видалити картку "${card.word}"?`)) return;
+  await deleteCard(card.id);
+  cards = await getAllCards();
+  renderGrid();
+  renderManageList();
+  showToast('Видалено');
+}
+
+/* ---- DASHBOARD TAB ---- */
+async function renderDashboard(){
+  const statsList = document.getElementById('statsList');
+  const sorted = [...cards].sort((a,b)=>(b.tapCount||0)-(a.tapCount||0));
+  statsList.innerHTML = sorted.length ? '' : '<p style="color:var(--gray)">Даних ще немає.</p>';
+  sorted.forEach(c=>{
+    const row = document.createElement('div');
+    row.className = 'stat-row';
+    row.innerHTML = `<span>${escapeHtml(c.word)}</span><span class="count">${c.tapCount||0}</span>`;
+    statsList.appendChild(row);
+  });
+
+  const logs = (await getAllLogs()).sort((a,b)=>b.ts-a.ts).slice(0,20);
+  const logList = document.getElementById('logList');
+  logList.innerHTML = logs.length ? '' : '<p style="color:var(--gray)">Ще немає речень.</p>';
+  logs.forEach(l=>{
+    const el = document.createElement('div');
+    el.className = 'log-entry';
+    const d = new Date(l.ts);
+    el.innerHTML = `<span class="time">${d.toLocaleString('uk-UA')}</span>${escapeHtml(l.words.join(' • '))}`;
+    logList.appendChild(el);
+  });
+}
+
+/* ================== TOAST ================== */
+let toastTimer=null;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+/* ================== EVENT BINDING ================== */
+function bindEvents(){
+  bindGearLongPress();
+
+  document.getElementById('pinCancel').addEventListener('click', closePinScreen);
+
+  document.getElementById('closeParent').addEventListener('click', closeParentPanel);
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.addEventListener('click', ()=>switchTab(b.dataset.tab));
+  });
+
+  document.getElementById('playStripBtn').addEventListener('click', playSentence);
+  document.getElementById('clearStripBtn').addEventListener('click', ()=>{
+    sentence = [];
+    renderStrip();
+  });
+
+  document.getElementById('takePhotoBtn').addEventListener('click', ()=>{
+    document.getElementById('photoInputCamera').click();
+  });
+  document.getElementById('choosePhotoBtn').addEventListener('click', ()=>{
+    document.getElementById('photoInputGallery').click();
+  });
+  document.getElementById('photoInputCamera').addEventListener('change', (e)=>handlePhotoFile(e.target.files[0]));
+  document.getElementById('photoInputGallery').addEventListener('change', (e)=>handlePhotoFile(e.target.files[0]));
+
+  document.getElementById('recordBtn').addEventListener('click', toggleRecording);
+  document.getElementById('chooseAudioBtn').addEventListener('click', ()=>{
+    document.getElementById('audioInputFile').click();
+  });
+  document.getElementById('audioInputFile').addEventListener('change', (e)=>handleAudioFile(e.target.files[0]));
+  document.getElementById('saveCardBtn').addEventListener('click', saveCard);
+}
+
+/* ================== SERVICE WORKER ================== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
