@@ -93,3 +93,7 @@ npx cap open android   # open in Android Studio
 ### Signing a release build
 
 See the workflow at `.github/workflows/build-apk.yml`. It currently builds an unsigned `assembleDebug` APK. To switch to a signed `assembleRelease` build, generate a keystore locally with `keytool`, add `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` as repo secrets, and update the workflow accordingly.
+
+### License
+
+MIT — see [LICENSE](LICENSE). / MIT — див. [LICENSE](LICENSE).
