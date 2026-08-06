@@ -14,3 +14,6 @@ app/android/.idea/
 
 # macOS
 .DS_Store
+*.jpg
+*.jpeg
+*.png.orig
