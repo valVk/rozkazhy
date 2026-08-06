@@ -14,6 +14,11 @@ export interface SentenceLogEntry {
   words: string[];
 }
 
+export interface SequenceItem {
+  itemId: number;
+  cardId: number;
+}
+
 export interface Sequence {
   id: number;
   name: string | null;
@@ -23,4 +28,5 @@ export interface Sequence {
   createdAt: number;
   lastUsedAt: number | null;
   cardIds: number[];
+  items: SequenceItem[];
 }

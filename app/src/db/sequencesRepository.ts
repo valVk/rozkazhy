@@ -19,26 +19,28 @@ async function attachCardIds(
   const ids = rows.map((r) => r.id);
   const placeholders = ids.map(() => "?").join(",");
   const itemsRes = await db.query(
-    `SELECT sequence_id, card_id FROM sequence_items WHERE sequence_id IN (${placeholders}) ORDER BY sequence_id, position ASC;`,
+    `SELECT id, sequence_id, card_id FROM sequence_items WHERE sequence_id IN (${placeholders}) ORDER BY sequence_id, position ASC;`,
     ids,
   );
   const itemRows =
     (itemsRes.values as
-      | { sequence_id: number; card_id: number }[]
+      | { id: number; sequence_id: number; card_id: number }[]
       | undefined) ?? [];
 
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    isFavorite: !!row.is_favorite,
-    favoriteAuto: !!row.favorite_auto,
-    usageCount: row.usage_count,
-    createdAt: row.created_at,
-    lastUsedAt: row.last_used_at,
-    cardIds: itemRows
-      .filter((i) => i.sequence_id === row.id)
-      .map((i) => i.card_id),
-  }));
+  return rows.map((row) => {
+    const rowItems = itemRows.filter((i) => i.sequence_id === row.id);
+    return {
+      id: row.id,
+      name: row.name,
+      isFavorite: !!row.is_favorite,
+      favoriteAuto: !!row.favorite_auto,
+      usageCount: row.usage_count,
+      createdAt: row.created_at,
+      lastUsedAt: row.last_used_at,
+      cardIds: rowItems.map((i) => i.card_id),
+      items: rowItems.map((i) => ({ itemId: i.id, cardId: i.card_id })),
+    };
+  });
 }
 
 export async function getAllSequences(
@@ -113,6 +115,22 @@ export async function setSequenceFavoriteManual(
     `UPDATE sequences SET is_favorite = ?, favorite_auto = 0 WHERE id = ?;`,
     [isFavorite ? 1 : 0, id],
   );
+}
+
+export async function replaceSequenceItems(
+  db: SQLiteDBConnection,
+  sequenceId: number,
+  cardIds: number[],
+): Promise<void> {
+  await db.run(`DELETE FROM sequence_items WHERE sequence_id = ?;`, [
+    sequenceId,
+  ]);
+  for (let i = 0; i < cardIds.length; i++) {
+    await db.run(
+      `INSERT INTO sequence_items (sequence_id, position, card_id) VALUES (?, ?, ?);`,
+      [sequenceId, i, cardIds[i]],
+    );
+  }
 }
 
 export async function deleteSequence(

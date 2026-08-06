@@ -5,6 +5,7 @@ import { useCards } from "../../composables/useCards";
 import { useCamera } from "../../composables/useCamera";
 import { useVoiceRecorder } from "../../composables/useVoiceRecorder";
 import { resolveMediaUrl, writeAudioFromBase64 } from "../../composables/mediaUrl";
+import { useAudioPlayback } from "../../composables/useAudioPlayback";
 import { useAppStore } from "../../stores/appStore";
 
 const props = defineProps<{ editingCard: Card | null }>();
@@ -15,6 +16,7 @@ const { addCard, updateCardMeta, updateCardImage, updateCardAudio } =
   useCards();
 const { capturePhoto, pickPhoto } = useCamera();
 const { isRecording, start, stop } = useVoiceRecorder();
+const { speak } = useAudioPlayback();
 
 const title = ref("");
 const imagePreviewUrl = ref<string | null>(null);
@@ -97,6 +99,20 @@ async function onAudioFileSelected(e: Event) {
   recStatus.value = "Аудіофайл додано ✓";
 }
 
+async function onTestVoice() {
+  const trimmed = title.value.trim();
+  if (!trimmed) {
+    store.showToast("Спочатку введіть слово");
+    return;
+  }
+  if (audioPreviewUrl.value) {
+    const audio = new Audio(audioPreviewUrl.value);
+    audio.play().catch(() => {});
+    return;
+  }
+  await speak(trimmed);
+}
+
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -160,7 +176,13 @@ async function onSave() {
     <label class="field-label">Слово або фраза</label>
     <input type="text" v-model="title" placeholder="Наприклад: ложка" />
 
-    <label class="field-label">Голос дорослого</label>
+    <label class="field-label">
+      Голос дорослого
+      <span class="hint">(якщо не записати — картка говоритиме синтезованим голосом)</span>
+    </label>
+    <button class="btn btn-secondary btn-block" style="margin-bottom: 10px" @click="onTestVoice">
+      🔊 Прослухати, як говоритиме картка
+    </button>
     <div class="row">
       <button
         class="btn btn-secondary"
@@ -216,5 +238,10 @@ async function onSave() {
   color: var(--gray);
   margin-top: 8px;
   min-height: 20px;
+}
+.hint {
+  font-weight: 400;
+  color: var(--gray);
+  font-size: 13px;
 }
 </style>

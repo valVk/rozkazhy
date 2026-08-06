@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useSequences } from "../composables/useSequences";
 import { useCards } from "../composables/useCards";
+import SequenceEditor from "./SequenceEditor.vue";
 import type { Sequence } from "../types/card";
 
 const emit = defineEmits<{
@@ -11,6 +12,8 @@ const emit = defineEmits<{
 
 const { sequences, refresh, replay, toggleFavorite, remove } = useSequences();
 const { cards } = useCards();
+
+const editingSequence = ref<Sequence | null>(null);
 
 onMounted(refresh);
 
@@ -24,6 +27,11 @@ function seqTitle(seq: Sequence): string {
 async function onReplay(seq: Sequence) {
   await replay(seq.id);
   emit("replay", seq.cardIds);
+}
+
+function onEditSaved() {
+  editingSequence.value = null;
+  refresh();
 }
 </script>
 
@@ -47,9 +55,17 @@ async function onReplay(seq: Sequence) {
         >
           {{ seq.isFavorite ? "⭐" : "☆" }}
         </button>
+        <button class="icon-btn" @click="editingSequence = seq">✏️</button>
         <button class="icon-btn" @click="remove(seq.id)">🗑</button>
       </div>
     </div>
+
+    <SequenceEditor
+      v-if="editingSequence"
+      :sequence="editingSequence"
+      @close="editingSequence = null"
+      @saved="onEditSaved"
+    />
   </div>
 </template>
 

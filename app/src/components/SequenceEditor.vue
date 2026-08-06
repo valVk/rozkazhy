@@ -1,0 +1,203 @@
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import type { Sequence } from "../types/card";
+import { useCards } from "../composables/useCards";
+import { useSequences } from "../composables/useSequences";
+import { resolveMediaUrl } from "../composables/mediaUrl";
+
+const props = defineProps<{ sequence: Sequence }>();
+const emit = defineEmits<{
+  (e: "close"): void;
+  (e: "saved"): void;
+}>();
+
+interface Row {
+  itemId: number;
+  cardId: number;
+  title: string;
+  imageUrl: string | null;
+}
+
+const { cards } = useCards();
+const { updateItems } = useSequences();
+
+const rows = ref<Row[]>([]);
+const rowEls = ref<(HTMLElement | null)[]>([]);
+const draggingIndex = ref<number | null>(null);
+const saving = ref(false);
+
+onMounted(async () => {
+  rows.value = await Promise.all(
+    props.sequence.items.map(async (item) => {
+      const card = cards.value.find((c) => c.id === item.cardId);
+      return {
+        itemId: item.itemId,
+        cardId: item.cardId,
+        title: card?.title ?? "?",
+        imageUrl: card ? await resolveMediaUrl(card.imagePath) : null,
+      };
+    }),
+  );
+});
+
+function removeRow(index: number) {
+  rows.value.splice(index, 1);
+}
+
+function onHandlePointerDown(index: number, event: PointerEvent) {
+  draggingIndex.value = index;
+  (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  window.addEventListener("pointermove", onPointerMove);
+  window.addEventListener("pointerup", onPointerUp);
+}
+
+function onPointerMove(event: PointerEvent) {
+  if (draggingIndex.value === null) return;
+  const from = draggingIndex.value;
+  for (let i = 0; i < rowEls.value.length; i++) {
+    const el = rowEls.value[i];
+    if (!el) continue;
+    const rect = el.getBoundingClientRect();
+    if (event.clientY >= rect.top && event.clientY <= rect.bottom && i !== from) {
+      const [moved] = rows.value.splice(from, 1);
+      rows.value.splice(i, 0, moved);
+      draggingIndex.value = i;
+      break;
+    }
+  }
+}
+
+function onPointerUp() {
+  draggingIndex.value = null;
+  window.removeEventListener("pointermove", onPointerMove);
+  window.removeEventListener("pointerup", onPointerUp);
+}
+
+async function onSave() {
+  saving.value = true;
+  await updateItems(
+    props.sequence.id,
+    rows.value.map((r) => r.cardId),
+  );
+  saving.value = false;
+  emit("saved");
+}
+</script>
+
+<template>
+  <div class="overlay">
+    <div class="sheet">
+      <button class="sheet-close" @click="emit('close')">✕</button>
+      <h2>Редагувати послідовність</h2>
+      <p class="hint">Перетягніть ⠿, щоб змінити порядок, або видаліть картку ✕.</p>
+
+      <div v-if="rows.length === 0" class="empty">
+        Усі картки видалено. Збереження видалить послідовність.
+      </div>
+
+      <div
+        v-for="(row, index) in rows"
+        :key="row.itemId"
+        :ref="(el) => (rowEls[index] = el as HTMLElement | null)"
+        class="edit-row"
+        :class="{ dragging: draggingIndex === index }"
+      >
+        <button class="drag-handle" @pointerdown="onHandlePointerDown(index, $event)">⠿</button>
+        <img v-if="row.imageUrl" :src="row.imageUrl" class="thumb" />
+        <span class="row-title">{{ row.title }}</span>
+        <button class="icon-btn" @click="removeRow(index)">✕</button>
+      </div>
+
+      <div class="row" style="margin-top: 16px">
+        <button class="btn btn-secondary" @click="emit('close')">Скасувати</button>
+        <button class="btn btn-primary" style="margin-top: 0" :disabled="saving" @click="onSave">
+          💾 Зберегти
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 30, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 60;
+}
+.sheet {
+  background: var(--cream);
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  border-radius: 26px 26px 0 0;
+  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+}
+.sheet-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  background: none;
+  border: none;
+  font-size: 26px;
+  color: var(--gray);
+  cursor: pointer;
+}
+.hint {
+  color: var(--gray);
+  font-size: 14px;
+  margin-top: 0;
+}
+.empty {
+  color: var(--gray);
+  text-align: center;
+  margin-top: 20px;
+}
+.edit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: white;
+  border-radius: 16px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  touch-action: none;
+}
+.edit-row.dragging {
+  outline: 2px solid var(--pink);
+}
+.drag-handle {
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: var(--gray);
+  cursor: grab;
+  padding: 6px;
+  touch-action: none;
+}
+.thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.row-title {
+  flex: 1;
+  font-weight: 700;
+  font-size: 15px;
+}
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #f2f2f2;
+  font-size: 16px;
+  cursor: pointer;
+}
+</style>

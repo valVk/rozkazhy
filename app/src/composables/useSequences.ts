@@ -68,6 +68,16 @@ export function useSequences() {
     await refresh();
   }
 
+  async function updateItems(id: number, cardIds: number[]): Promise<void> {
+    const db = await getDb();
+    if (cardIds.length === 0) {
+      await sequencesRepo.deleteSequence(db, id);
+    } else {
+      await sequencesRepo.replaceSequenceItems(db, id, cardIds);
+    }
+    await refresh();
+  }
+
   return {
     sequences,
     refresh,
@@ -75,6 +85,7 @@ export function useSequences() {
     replay,
     toggleFavorite,
     remove,
+    updateItems,
     getFavoriteThreshold,
     setFavoriteThreshold,
   };
