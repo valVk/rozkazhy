@@ -94,3 +94,16 @@ jobs:
         with:
           name: rozkazhy-${{ steps.version.outputs.version }}-apk
           path: app/android/app/build/outputs/apk/release/rozkazhy-${{ steps.version.outputs.version }}.apk
+
+      - name: Commit version bump
+        working-directory: ${{ github.workspace }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/package.json app/package-lock.json
+          if git diff --cached --quiet; then
+            echo "package.json already at ${{ steps.version.outputs.version }}, nothing to commit"
+          else
+            git commit -m "chore: bump version to ${{ steps.version.outputs.version }} [skip ci]"
+            git push origin HEAD:${{ github.event.repository.default_branch }}
+          fi
