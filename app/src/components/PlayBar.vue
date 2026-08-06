@@ -1,8 +1,13 @@
 <script setup lang="ts">
-defineProps<{ disabled: boolean; compact: boolean }>();
+defineProps<{
+  disabled: boolean;
+  compact: boolean;
+  isPlaying: boolean;
+}>();
 const emit = defineEmits<{
   (e: "save"): void;
   (e: "play"): void;
+  (e: "pause"): void;
   (e: "clear"): void;
 }>();
 </script>
@@ -20,10 +25,10 @@ const emit = defineEmits<{
     <button
       class="play-btn"
       :disabled="disabled"
-      title="Відтворити"
-      @click="emit('play')"
+      :title="isPlaying ? 'Пауза' : 'Відтворити'"
+      @click="isPlaying ? emit('pause') : emit('play')"
     >
-      ▶
+      {{ isPlaying ? "⏸" : "▶" }}
     </button>
     <button
       class="side-btn clear-btn"

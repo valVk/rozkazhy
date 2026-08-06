@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import AppHeader from "./components/AppHeader.vue";
 import SentenceStrip from "./components/SentenceStrip.vue";
 import PlayBar from "./components/PlayBar.vue";
@@ -10,21 +10,34 @@ import ParentPanel from "./components/ParentPanel/ParentPanel.vue";
 import ShToast from "./components/shared/Toast.vue";
 import { useAppStore } from "./stores/appStore";
 import { useCards } from "./composables/useCards";
-import { useSentenceLog } from "./composables/useSentenceLog";
 import { useSequences } from "./composables/useSequences";
+import { usePlaybackController } from "./composables/usePlaybackController";
 import { useAudioPlayback } from "./composables/useAudioPlayback";
 import type { Card } from "./types/card";
 
 const store = useAppStore();
 const { cards, refresh, incrementTapCount } = useCards();
-const { logSentence } = useSentenceLog();
 const { saveCurrent } = useSequences();
+const playback = usePlaybackController();
 const { playCardAudio } = useAudioPlayback();
 
 const pinScreenVisible = ref(false);
 const isCompact = ref(false);
 
 onMounted(refresh);
+
+// If a card currently in the sentence gets deleted (e.g. via the parent
+// panel) while it's mid-playback, the playback loop would keep running
+// against a stale array — stop it rather than let it silently desync.
+watch(cards, () => {
+  if (!playback.isPlaying.value && !playback.isPaused.value) return;
+  const stillValid = store.sentence.every((c) =>
+    cards.value.some((existing) => existing.id === c.id),
+  );
+  if (!stillValid) {
+    playback.stop();
+  }
+});
 
 async function onCardTap(card: Card) {
   store.addToSentence(card);
@@ -33,15 +46,20 @@ async function onCardTap(card: Card) {
 }
 
 async function onPlaySentence() {
-  for (const card of store.sentence) {
-    await playCardAudio(card);
-    await new Promise((r) => setTimeout(r, 150));
-  }
-  await logSentence(store.sentence);
+  await playback.play(store.sentence);
+}
+
+function onPauseSentence() {
+  playback.pause();
 }
 
 function onClearSentence() {
+  playback.stop();
   store.clearSentence();
+}
+
+function onSelectFrame(index: number) {
+  playback.selectFrame(index);
 }
 
 async function onSaveSequence() {
@@ -59,7 +77,7 @@ async function onReplaySequence(cardIds: number[]) {
     .filter((c): c is Card => !!c);
   store.loadSentence(replayCards);
   store.sequencesPanelOpen = false;
-  await onPlaySentence();
+  await playback.play(replayCards);
 }
 
 function onOpenParent() {
@@ -79,12 +97,21 @@ function onPinCancel() {
 <template>
   <div id="app">
     <AppHeader @open-parent="onOpenParent" @open-sequences="onOpenSequences" />
-    <SentenceStrip :cards="store.sentence" :compact="isCompact" />
+    <SentenceStrip
+      :cards="store.sentence"
+      :compact="isCompact"
+      :current-index="playback.currentIndex.value"
+      :paused="playback.isPaused.value"
+      :is-playing="playback.isPlaying.value"
+      @select-frame="onSelectFrame"
+    />
     <PlayBar
       :disabled="store.sentence.length === 0"
       :compact="isCompact"
+      :is-playing="playback.isPlaying.value"
       @save="onSaveSequence"
       @play="onPlaySentence"
+      @pause="onPauseSentence"
       @clear="onClearSentence"
     />
     <CardGrid
