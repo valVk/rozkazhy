@@ -15,6 +15,7 @@ import { useSequences } from "./composables/useSequences";
 import { usePlaybackController } from "./composables/usePlaybackController";
 import { useAudioPlayback } from "./composables/useAudioPlayback";
 import { useUpdateCheck } from "./composables/useUpdateCheck";
+import { useCardCategories } from "./composables/useCardCategories";
 import type { Card } from "./types/card";
 
 const store = useAppStore();
@@ -23,6 +24,7 @@ const { saveCurrent } = useSequences();
 const playback = usePlaybackController();
 const { playCardAudio } = useAudioPlayback();
 const { updateAvailable, checkForUpdate } = useUpdateCheck();
+const { load: loadCardCategories } = useCardCategories();
 
 const pinScreenVisible = ref(false);
 const isCompact = ref(false);
@@ -30,6 +32,7 @@ const updateModalOpen = ref(false);
 
 onMounted(refresh);
 onMounted(checkForUpdate);
+onMounted(loadCardCategories);
 
 // If a card currently in the sentence gets deleted (e.g. via the parent
 // panel) while it's mid-playback, the playback loop would keep running

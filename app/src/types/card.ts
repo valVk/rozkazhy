@@ -1,8 +1,11 @@
+export type CardCategory = "person" | "verb" | "noun" | "descriptor" | "social";
+
 export interface Card {
   id: number;
   title: string;
   imagePath: string;
   audioPath: string | null;
+  category: CardCategory | null;
   tapCount: number;
   createdAt: number;
   updatedAt: number;

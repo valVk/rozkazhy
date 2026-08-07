@@ -10,23 +10,31 @@ import {
   mdiVolumeHigh,
 } from "@mdi/js";
 import MdiIcon from "../shared/MdiIcon.vue";
-import type { Card } from "../../types/card";
+import CategoryPicker from "../shared/CategoryPicker.vue";
+import type { Card, CardCategory } from "../../types/card";
 import { useCards } from "../../composables/useCards";
 import { useCamera } from "../../composables/useCamera";
 import { useVoiceRecorder } from "../../composables/useVoiceRecorder";
 import { resolveMediaUrl, writeAudioFromBase64 } from "../../composables/mediaUrl";
 import { useAudioPlayback } from "../../composables/useAudioPlayback";
 import { useAppStore } from "../../stores/appStore";
+import { useCardCategories } from "../../composables/useCardCategories";
 
 const props = defineProps<{ editingCard: Card | null }>();
 const emit = defineEmits<{ (e: "saved"): void }>();
 
 const store = useAppStore();
-const { addCard, updateCardMeta, updateCardImage, updateCardAudio } =
-  useCards();
+const {
+  addCard,
+  updateCardMeta,
+  updateCardCategory,
+  updateCardImage,
+  updateCardAudio,
+} = useCards();
 const { capturePhoto, pickPhoto } = useCamera();
 const { isRecording, start, stop } = useVoiceRecorder();
 const { speak } = useAudioPlayback();
+const { coloringEnabled, categoryColors } = useCardCategories();
 
 const title = ref("");
 const imagePreviewUrl = ref<string | null>(null);
@@ -35,6 +43,7 @@ const pendingImagePath = ref<string | null>(null);
 const pendingAudioPath = ref<string | null>(null);
 const imageDirty = ref(false);
 const audioDirty = ref(false);
+const category = ref<CardCategory | null>(null);
 const recStatus = ref("");
 const audioFileInput = ref<HTMLInputElement | null>(null);
 
@@ -46,6 +55,7 @@ function resetForm() {
   pendingAudioPath.value = null;
   imageDirty.value = false;
   audioDirty.value = false;
+  category.value = null;
   recStatus.value = "";
 }
 
@@ -56,6 +66,7 @@ async function loadFromEditingCard() {
   }
   resetForm();
   title.value = props.editingCard.title;
+  category.value = props.editingCard.category;
   imagePreviewUrl.value = await resolveMediaUrl(props.editingCard.imagePath);
   audioPreviewUrl.value = await resolveMediaUrl(props.editingCard.audioPath);
 }
@@ -147,6 +158,9 @@ async function onSave() {
     if (trimmed !== props.editingCard.title) {
       await updateCardMeta(id, trimmed);
     }
+    if (category.value !== props.editingCard.category) {
+      await updateCardCategory(id, category.value);
+    }
     if (imageDirty.value && pendingImagePath.value) {
       await updateCardImage(id, pendingImagePath.value);
     }
@@ -163,6 +177,7 @@ async function onSave() {
       title: trimmed,
       imagePath: pendingImagePath.value,
       audioPath: pendingAudioPath.value,
+      category: category.value,
     });
     store.showToast("Картку додано");
   }
@@ -191,6 +206,11 @@ async function onSave() {
 
     <label class="field-label">Слово або фраза</label>
     <input type="text" v-model="title" placeholder="Наприклад: ложка" />
+
+    <template v-if="coloringEnabled">
+      <label class="field-label">Тип слова</label>
+      <CategoryPicker v-model="category" :colors="categoryColors" />
+    </template>
 
     <label class="field-label">
       Голос дорослого
