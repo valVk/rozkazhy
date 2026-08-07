@@ -22,7 +22,7 @@ function formatDate(ts: number): string {
 
 <template>
   <div>
-    <h3 style="margin-top: 0">Найчастіші слова</h3>
+    <h3 class="first">Найчастіші слова</h3>
     <p v-if="sortedCards.length === 0" class="empty">Даних ще немає.</p>
     <div v-for="c in sortedCards" :key="c.id" class="stat-row">
       <span>{{ c.title }}</span>
@@ -39,8 +39,11 @@ function formatDate(ts: number): string {
 </template>
 
 <style scoped>
+.first {
+  margin-top: 0;
+}
 .empty {
-  color: var(--gray);
+  color: var(--mist);
 }
 .stat-row {
   display: flex;
@@ -52,7 +55,7 @@ function formatDate(ts: number): string {
   margin-bottom: 8px;
 }
 .stat-row .count {
-  background: var(--teal);
+  background: var(--sky);
   color: white;
   font-weight: 800;
   border-radius: 12px;
@@ -69,7 +72,7 @@ function formatDate(ts: number): string {
   font-size: 15px;
 }
 .log-entry .time {
-  color: var(--gray);
+  color: var(--mist);
   font-size: 12px;
   display: block;
   margin-bottom: 4px;

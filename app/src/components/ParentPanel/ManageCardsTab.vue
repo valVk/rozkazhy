@@ -47,7 +47,7 @@ async function onDelete(card: Card) {
 
 <style scoped>
 .empty {
-  color: var(--gray);
+  color: var(--mist);
 }
 .card-list-item {
   display: flex;
@@ -71,8 +71,8 @@ async function onDelete(card: Card) {
   font-size: 16px;
 }
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #f2f2f2;

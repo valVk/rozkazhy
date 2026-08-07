@@ -18,10 +18,12 @@ async function onDownload() {
 <template>
   <div class="overlay" @click.self="emit('close')">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">
-        <MdiIcon :path="mdiClose" :size="22" />
-      </button>
-      <h2>Доступна нова версія</h2>
+      <div class="sheet-header">
+        <h2>Доступна нова версія</h2>
+        <button class="sheet-close" @click="emit('close')">
+          <MdiIcon :path="mdiClose" :size="22" />
+        </button>
+      </div>
       <p class="body">
         Встановлена версія: {{ currentVersion }}<br />
         Нова версія: {{ latestVersion }}
@@ -45,26 +47,37 @@ async function onDownload() {
   z-index: 70;
 }
 .sheet {
-  background: var(--cream);
+  position: relative;
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   border-radius: 26px 26px 0 0;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 }
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sheet-header h2 {
+  margin: 0;
+}
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .body {
-  color: var(--dark);
+  color: var(--ink);
   font-size: 15px;
   line-height: 1.6;
 }

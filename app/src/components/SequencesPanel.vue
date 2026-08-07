@@ -40,31 +40,35 @@ function onEditSaved() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">
-        <MdiIcon :path="mdiClose" :size="22" />
-      </button>
-      <h2>Послідовності</h2>
-      <div v-if="sequences.length === 0" class="empty">
-        Ще немає збережених послідовностей.
-      </div>
-      <div v-for="seq in sequences" :key="seq.id" class="seq-item">
-        <button class="seq-body" @click="onReplay(seq)">
-          <span class="seq-name">{{ seqTitle(seq) }}</span>
-          <span class="seq-meta">Використано: {{ seq.usageCount }}</span>
-        </button>
-        <button
-          class="icon-btn"
-          :class="{ active: seq.isFavorite }"
-          @click="toggleFavorite(seq.id, !seq.isFavorite)"
-        >
-          <MdiIcon :path="seq.isFavorite ? mdiStar : mdiStarOutline" :size="18" />
-        </button>
-        <button class="icon-btn" @click="editingSequence = seq">
-          <MdiIcon :path="mdiPencil" :size="18" />
-        </button>
-        <button class="icon-btn" @click="remove(seq.id)">
-          <MdiIcon :path="mdiTrashCan" :size="18" />
-        </button>
+      <div class="sheet-body">
+        <div class="sheet-header">
+          <h2>Послідовності</h2>
+          <button class="sheet-close" @click="emit('close')">
+            <MdiIcon :path="mdiClose" :size="22" />
+          </button>
+        </div>
+        <div v-if="sequences.length === 0" class="empty">
+          Ще немає збережених послідовностей.
+        </div>
+        <div v-for="seq in sequences" :key="seq.id" class="seq-item">
+          <button class="seq-body" @click="onReplay(seq)">
+            <span class="seq-name">{{ seqTitle(seq) }}</span>
+            <span class="seq-meta">Використано: {{ seq.usageCount }}</span>
+          </button>
+          <button
+            class="icon-btn"
+            :class="{ active: seq.isFavorite }"
+            @click="toggleFavorite(seq.id, !seq.isFavorite)"
+          >
+            <MdiIcon :path="seq.isFavorite ? mdiStar : mdiStarOutline" :size="18" />
+          </button>
+          <button class="icon-btn" @click="editingSequence = seq">
+            <MdiIcon :path="mdiPencil" :size="18" />
+          </button>
+          <button class="icon-btn" @click="remove(seq.id)">
+            <MdiIcon :path="mdiTrashCan" :size="18" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -88,28 +92,48 @@ function onEditSaved() {
   z-index: 50;
 }
 .sheet {
-  background: var(--cream);
+  position: relative;
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
-  overflow-y: auto;
   border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-body {
+  overflow-y: auto;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sheet-header h2 {
+  margin: 0;
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .empty {
-  color: var(--gray);
+  color: var(--mist);
   text-align: center;
   margin-top: 20px;
 }
@@ -138,11 +162,11 @@ function onEditSaved() {
 }
 .seq-meta {
   font-size: 12px;
-  color: var(--gray);
+  color: var(--mist);
 }
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #f2f2f2;
@@ -153,6 +177,6 @@ function onEditSaved() {
   justify-content: center;
 }
 .icon-btn.active {
-  background: var(--yellow);
+  background: var(--sun);
 }
 </style>

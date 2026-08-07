@@ -90,7 +90,7 @@ async function handleComplete() {
 #pinScreen {
   position: fixed;
   inset: 0;
-  background: var(--cream);
+  background: var(--paper);
   z-index: 60;
   display: flex;
   flex-direction: column;
@@ -111,7 +111,7 @@ async function handleComplete() {
   background: #ddd;
 }
 .pin-dot.filled {
-  background: var(--pink);
+  background: var(--bloom);
 }
 #pinPad {
   display: grid;
@@ -130,13 +130,13 @@ async function handleComplete() {
   cursor: pointer;
 }
 #pinHint {
-  color: var(--gray);
+  color: var(--mist);
   font-size: 13px;
   margin-top: 16px;
   max-width: 300px;
 }
 .error {
-  color: var(--danger);
+  color: var(--signal);
   font-weight: 700;
   margin-top: 16px;
 }

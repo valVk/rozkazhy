@@ -27,52 +27,56 @@ function onSaved() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">
-        <MdiIcon :path="mdiClose" :size="22" />
-      </button>
-      <h2>Панель дорослого</h2>
-      <div class="tabs">
-        <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'add' }"
-          @click="activeTab = 'add'; editingCard = null"
-        >
-          <MdiIcon :path="mdiPlus" :size="16" />
-          Додати
-        </button>
-        <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'manage' }"
-          @click="activeTab = 'manage'"
-        >
-          <MdiIcon :path="mdiFolder" :size="16" />
-          Картки
-        </button>
-        <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'dashboard' }"
-          @click="activeTab = 'dashboard'"
-        >
-          <MdiIcon :path="mdiChartBar" :size="16" />
-          Дашборд
-        </button>
-        <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'settings' }"
-          @click="activeTab = 'settings'"
-        >
-          <MdiIcon :path="mdiCog" :size="16" />
-        </button>
-      </div>
+      <div class="sheet-body">
+        <div class="sheet-header">
+          <h2>Панель дорослого</h2>
+          <button class="sheet-close" @click="emit('close')">
+            <MdiIcon :path="mdiClose" :size="22" />
+          </button>
+        </div>
+        <div class="tabs">
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'add' }"
+            @click="activeTab = 'add'; editingCard = null"
+          >
+            <MdiIcon :path="mdiPlus" :size="16" />
+            Додати
+          </button>
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'manage' }"
+            @click="activeTab = 'manage'"
+          >
+            <MdiIcon :path="mdiFolder" :size="16" />
+            Картки
+          </button>
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'dashboard' }"
+            @click="activeTab = 'dashboard'"
+          >
+            <MdiIcon :path="mdiChartBar" :size="16" />
+            Дашборд
+          </button>
+          <button
+            class="tab-btn"
+            :class="{ active: activeTab === 'settings' }"
+            @click="activeTab = 'settings'"
+          >
+            <MdiIcon :path="mdiCog" :size="16" />
+          </button>
+        </div>
 
-      <AddCardTab
-        v-if="activeTab === 'add'"
-        :editing-card="editingCard"
-        @saved="onSaved"
-      />
-      <ManageCardsTab v-else-if="activeTab === 'manage'" @edit="startEdit" />
-      <DashboardTab v-else-if="activeTab === 'dashboard'" />
-      <SettingsTab v-else-if="activeTab === 'settings'" />
+        <AddCardTab
+          v-if="activeTab === 'add'"
+          :editing-card="editingCard"
+          @saved="onSaved"
+        />
+        <ManageCardsTab v-else-if="activeTab === 'manage'" @edit="startEdit" />
+        <DashboardTab v-else-if="activeTab === 'dashboard'" />
+        <SettingsTab v-else-if="activeTab === 'settings'" />
+      </div>
     </div>
   </div>
 </template>
@@ -88,21 +92,41 @@ function onSaved() {
   z-index: 50;
 }
 .sheet {
-  background: var(--cream);
+  position: relative;
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
-  overflow-y: auto;
   border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-body {
+  overflow-y: auto;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sheet-header h2 {
+  margin: 0;
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -115,11 +139,12 @@ function onSaved() {
 }
 .tab-btn {
   flex: 1;
+  min-height: 44px;
   padding: 10px;
   border-radius: 14px;
   border: none;
   background: #fff;
-  color: var(--dark);
+  color: var(--ink);
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
@@ -129,7 +154,7 @@ function onSaved() {
   gap: 4px;
 }
 .tab-btn.active {
-  background: var(--pink);
+  background: var(--bloom);
   color: white;
 }
 </style>

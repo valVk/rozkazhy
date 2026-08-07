@@ -32,7 +32,7 @@ function onTap() {
 .card {
   background: white;
   border-radius: var(--radius);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 4px rgba(43, 42, 51, 0.06);
   overflow: hidden;
   border: none;
   padding: 0;
@@ -40,29 +40,33 @@ function onTap() {
   flex-direction: column;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.08s ease;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.15s ease;
 }
 .card:active {
-  transform: scale(0.94);
+  transform: scale(0.96);
+  box-shadow: 0 1px 2px rgba(43, 42, 51, 0.06);
 }
 .thumb {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
-  background: #eee;
+  background: #f4f2ee;
   display: block;
 }
 .thumb-placeholder {
-  background: #eee;
+  background: #f4f2ee;
 }
 .label {
-  padding: 8px 6px;
+  padding: 10px 8px;
   text-align: center;
   font-weight: 700;
   font-size: 16px;
-  color: var(--dark);
+  color: var(--ink);
 }
 .card.active-glow {
-  outline: 4px solid var(--yellow);
+  outline: 3px solid var(--sun);
+  outline-offset: 2px;
 }
 </style>

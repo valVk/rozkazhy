@@ -47,12 +47,10 @@ const emit = defineEmits<{
 <style scoped>
 .playbar {
   flex-shrink: 0;
-  background: white;
-  border-bottom: 3px solid var(--teal);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
+  padding: 10px 20px;
   transition: padding 0.25s ease;
 }
 .playbar.compact {
@@ -60,16 +58,16 @@ const emit = defineEmits<{
 }
 
 .play-btn {
-  width: 64px;
-  height: 64px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   border: none;
-  background: #4caf80;
+  background: var(--moss);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(43, 42, 51, 0.14);
   cursor: pointer;
   transition:
     width 0.25s ease,
@@ -81,13 +79,13 @@ const emit = defineEmits<{
     height 0.25s ease;
 }
 .playbar.compact .play-btn {
-  width: 38px;
-  height: 38px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  width: 34px;
+  height: 34px;
+  box-shadow: 0 1px 3px rgba(43, 42, 51, 0.12);
 }
 .playbar.compact .play-btn :deep(svg) {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .side-btn {
@@ -118,10 +116,10 @@ const emit = defineEmits<{
   height: 14px;
 }
 .save-btn {
-  background: var(--teal);
+  background: var(--sky);
 }
 .clear-btn {
-  background: var(--danger);
+  background: var(--signal);
 }
 button:disabled {
   opacity: 0.35;

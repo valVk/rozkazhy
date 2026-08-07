@@ -89,39 +89,43 @@ async function onSave() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">
-        <MdiIcon :path="mdiClose" :size="22" />
-      </button>
-      <h2>Редагувати послідовність</h2>
-      <p class="hint">Перетягніть за ручку, щоб змінити порядок, або видаліть картку.</p>
+      <div class="sheet-body">
+        <div class="sheet-header">
+          <h2>Редагувати послідовність</h2>
+          <button class="sheet-close" @click="emit('close')">
+            <MdiIcon :path="mdiClose" :size="22" />
+          </button>
+        </div>
+        <p class="hint">Перетягніть за ручку, щоб змінити порядок, або видаліть картку.</p>
 
-      <div v-if="rows.length === 0" class="empty">
-        Усі картки видалено. Збереження видалить послідовність.
-      </div>
+        <div v-if="rows.length === 0" class="empty">
+          Усі картки видалено. Збереження видалить послідовність.
+        </div>
 
-      <div
-        v-for="(row, index) in rows"
-        :key="row.itemId"
-        :ref="(el) => (rowEls[index] = el as HTMLElement | null)"
-        class="edit-row"
-        :class="{ dragging: draggingIndex === index }"
-      >
-        <button class="drag-handle" @pointerdown="onHandlePointerDown(index, $event)">
-          <MdiIcon :path="mdiDragVertical" :size="22" />
-        </button>
-        <img v-if="row.imageUrl" :src="row.imageUrl" class="thumb" />
-        <span class="row-title">{{ row.title }}</span>
-        <button class="icon-btn" @click="removeRow(index)">
-          <MdiIcon :path="mdiClose" :size="18" />
-        </button>
-      </div>
+        <div
+          v-for="(row, index) in rows"
+          :key="row.itemId"
+          :ref="(el) => (rowEls[index] = el as HTMLElement | null)"
+          class="edit-row"
+          :class="{ dragging: draggingIndex === index }"
+        >
+          <button class="drag-handle" @pointerdown="onHandlePointerDown(index, $event)">
+            <MdiIcon :path="mdiDragVertical" :size="22" />
+          </button>
+          <img v-if="row.imageUrl" :src="row.imageUrl" class="thumb" />
+          <span class="row-title">{{ row.title }}</span>
+          <button class="icon-btn" @click="removeRow(index)">
+            <MdiIcon :path="mdiClose" :size="18" />
+          </button>
+        </div>
 
-      <div class="row" style="margin-top: 16px">
-        <button class="btn btn-secondary" @click="emit('close')">Скасувати</button>
-        <button class="btn btn-primary" style="margin-top: 0" :disabled="saving" @click="onSave">
-          <MdiIcon :path="mdiContentSave" :size="18" />
-          Зберегти
-        </button>
+        <div class="row" style="margin-top: 16px">
+          <button class="btn btn-secondary" @click="emit('close')">Скасувати</button>
+          <button class="btn btn-primary" style="margin-top: 0" :disabled="saving" @click="onSave">
+            <MdiIcon :path="mdiContentSave" :size="18" />
+            Зберегти
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -138,33 +142,53 @@ async function onSave() {
   z-index: 60;
 }
 .sheet {
-  background: var(--cream);
+  position: relative;
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
-  overflow-y: auto;
   border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-body {
+  overflow-y: auto;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sheet-header h2 {
+  margin: 0;
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .hint {
-  color: var(--gray);
+  color: var(--mist);
   font-size: 14px;
   margin-top: 0;
 }
 .empty {
-  color: var(--gray);
+  color: var(--mist);
   text-align: center;
   margin-top: 20px;
 }
@@ -179,14 +203,16 @@ async function onSave() {
   touch-action: none;
 }
 .edit-row.dragging {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--bloom);
 }
 .drag-handle {
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: grab;
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
   touch-action: none;
   display: flex;
   align-items: center;
@@ -205,8 +231,8 @@ async function onSave() {
   font-size: 15px;
 }
 .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #f2f2f2;

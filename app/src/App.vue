@@ -111,23 +111,25 @@ function onOpenUpdate() {
       @open-sequences="onOpenSequences"
       @open-update="onOpenUpdate"
     />
-    <SentenceStrip
-      :cards="store.sentence"
-      :compact="isCompact"
-      :current-index="playback.currentIndex.value"
-      :paused="playback.isPaused.value"
-      :is-playing="playback.isPlaying.value"
-      @select-frame="onSelectFrame"
-    />
-    <PlayBar
-      :disabled="store.sentence.length === 0"
-      :compact="isCompact"
-      :is-playing="playback.isPlaying.value"
-      @save="onSaveSequence"
-      @play="onPlaySentence"
-      @pause="onPauseSentence"
-      @clear="onClearSentence"
-    />
+    <div class="composer">
+      <SentenceStrip
+        :cards="store.sentence"
+        :compact="isCompact"
+        :current-index="playback.currentIndex.value"
+        :paused="playback.isPaused.value"
+        :is-playing="playback.isPlaying.value"
+        @select-frame="onSelectFrame"
+      />
+      <PlayBar
+        :disabled="store.sentence.length === 0"
+        :compact="isCompact"
+        :is-playing="playback.isPlaying.value"
+        @save="onSaveSequence"
+        @play="onPlaySentence"
+        @pause="onPauseSentence"
+        @clear="onClearSentence"
+      />
+    </div>
     <CardGrid
       :cards="cards"
       @tap="onCardTap"
@@ -149,3 +151,17 @@ function onOpenUpdate() {
     <ShToast />
   </div>
 </template>
+
+<style scoped>
+/* SentenceStrip and PlayBar used to be two separately-bordered boxes with
+   mismatched heights — visually unifying them into one panel (single
+   background, single soft shadow) reads as one "sentence composer" instead
+   of two stacked chrome elements. */
+.composer {
+  flex-shrink: 0;
+  background: white;
+  box-shadow: 0 2px 10px rgba(43, 42, 51, 0.06);
+  position: relative;
+  z-index: 1;
+}
+</style>
