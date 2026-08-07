@@ -60,9 +60,9 @@ function onTap() {
   text-align: center;
   font-weight: 700;
   font-size: 16px;
-  color: var(--dark);
+  color: var(--ink);
 }
 .card.active-glow {
-  outline: 4px solid var(--yellow);
+  outline: 4px solid var(--sun);
 }
 </style>

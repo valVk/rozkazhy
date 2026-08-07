@@ -88,7 +88,7 @@ function onSaved() {
   z-index: 50;
 }
 .sheet {
-  background: var(--cream);
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
@@ -100,9 +100,11 @@ function onSaved() {
   position: sticky;
   top: 0;
   float: right;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -115,11 +117,12 @@ function onSaved() {
 }
 .tab-btn {
   flex: 1;
+  min-height: 44px;
   padding: 10px;
   border-radius: 14px;
   border: none;
   background: #fff;
-  color: var(--dark);
+  color: var(--ink);
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
@@ -129,7 +132,7 @@ function onSaved() {
   gap: 4px;
 }
 .tab-btn.active {
-  background: var(--pink);
+  background: var(--bloom);
   color: white;
 }
 </style>

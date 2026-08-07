@@ -88,7 +88,7 @@ function onEditSaved() {
   z-index: 50;
 }
 .sheet {
-  background: var(--cream);
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
@@ -100,16 +100,18 @@ function onEditSaved() {
   position: sticky;
   top: 0;
   float: right;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .empty {
-  color: var(--gray);
+  color: var(--mist);
   text-align: center;
   margin-top: 20px;
 }
@@ -138,11 +140,11 @@ function onEditSaved() {
 }
 .seq-meta {
   font-size: 12px;
-  color: var(--gray);
+  color: var(--mist);
 }
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #f2f2f2;
@@ -153,6 +155,6 @@ function onEditSaved() {
   justify-content: center;
 }
 .icon-btn.active {
-  background: var(--yellow);
+  background: var(--sun);
 }
 </style>

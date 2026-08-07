@@ -96,7 +96,7 @@ function onItemClick(index: number) {
 #strip {
   flex-shrink: 0;
   background: white;
-  border-bottom: 3px solid var(--teal);
+  border-bottom: 3px solid var(--sky);
   padding: 6px 10px;
   display: flex;
   align-items: center;
@@ -122,7 +122,7 @@ function onItemClick(index: number) {
   min-height: 30px;
 }
 .strip-empty-hint {
-  color: var(--gray);
+  color: var(--mist);
   font-size: 15px;
   padding-left: 6px;
   display: flex;
@@ -135,7 +135,7 @@ function onItemClick(index: number) {
   height: 48px;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid var(--teal);
+  border: 2px solid var(--sky);
   position: relative;
   background: #fff;
   transition:
@@ -150,7 +150,7 @@ function onItemClick(index: number) {
   border-width: 1px;
 }
 .strip-item.active {
-  outline: 3px solid var(--yellow);
+  outline: 3px solid var(--sun);
   outline-offset: 1px;
 }
 .strip-item.selectable {

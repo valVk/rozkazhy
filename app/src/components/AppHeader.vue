@@ -65,14 +65,15 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: calc(14px + env(safe-area-inset-top)) 16px 14px;
-  background: var(--pink);
+  background: var(--bloom);
   color: white;
   flex-shrink: 0;
 }
 header h1 {
-  font-size: 20px;
+  font-size: 22px;
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 .header-actions {
   display: flex;
@@ -100,14 +101,14 @@ header h1 {
 }
 #updateBadge {
   position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 20px;
-  height: 20px;
+  top: -6px;
+  right: -6px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: var(--danger);
+  background: var(--signal);
   color: white;
-  border: 2px solid var(--pink);
+  border: 2px solid var(--bloom);
   padding: 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }

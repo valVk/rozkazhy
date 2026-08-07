@@ -242,7 +242,7 @@ async function onSave() {
   justify-content: center;
   overflow: hidden;
   margin-top: 10px;
-  color: var(--gray);
+  color: var(--mist);
   font-size: 15px;
   text-align: center;
 }
@@ -252,18 +252,18 @@ async function onSave() {
   object-fit: cover;
 }
 .recording {
-  background: var(--danger) !important;
+  background: var(--signal) !important;
   color: white;
 }
 .rec-status {
   font-size: 14px;
-  color: var(--gray);
+  color: var(--mist);
   margin-top: 8px;
   min-height: 20px;
 }
 .hint {
   font-weight: 400;
-  color: var(--gray);
+  color: var(--mist);
   font-size: 13px;
 }
 </style>

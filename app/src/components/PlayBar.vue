@@ -48,7 +48,7 @@ const emit = defineEmits<{
 .playbar {
   flex-shrink: 0;
   background: white;
-  border-bottom: 3px solid var(--teal);
+  border-bottom: 3px solid var(--sky);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -64,7 +64,7 @@ const emit = defineEmits<{
   height: 64px;
   border-radius: 50%;
   border: none;
-  background: #4caf80;
+  background: var(--moss);
   color: white;
   display: flex;
   align-items: center;
@@ -118,10 +118,10 @@ const emit = defineEmits<{
   height: 14px;
 }
 .save-btn {
-  background: var(--teal);
+  background: var(--sky);
 }
 .clear-btn {
-  background: var(--danger);
+  background: var(--signal);
 }
 button:disabled {
   opacity: 0.35;

@@ -45,7 +45,7 @@ async function onDownload() {
   z-index: 70;
 }
 .sheet {
-  background: var(--cream);
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   border-radius: 26px 26px 0 0;
@@ -55,16 +55,18 @@ async function onDownload() {
   position: sticky;
   top: 0;
   float: right;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .body {
-  color: var(--dark);
+  color: var(--ink);
   font-size: 15px;
   line-height: 1.6;
 }

@@ -138,7 +138,7 @@ async function onSave() {
   z-index: 60;
 }
 .sheet {
-  background: var(--cream);
+  background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
@@ -150,21 +150,23 @@ async function onSave() {
   position: sticky;
   top: 0;
   float: right;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .hint {
-  color: var(--gray);
+  color: var(--mist);
   font-size: 14px;
   margin-top: 0;
 }
 .empty {
-  color: var(--gray);
+  color: var(--mist);
   text-align: center;
   margin-top: 20px;
 }
@@ -179,14 +181,16 @@ async function onSave() {
   touch-action: none;
 }
 .edit-row.dragging {
-  outline: 2px solid var(--pink);
+  outline: 2px solid var(--bloom);
 }
 .drag-handle {
   background: none;
   border: none;
-  color: var(--gray);
+  color: var(--mist);
   cursor: grab;
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
   touch-action: none;
   display: flex;
   align-items: center;
@@ -205,8 +209,8 @@ async function onSave() {
   font-size: 15px;
 }
 .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   border: none;
   background: #f2f2f2;

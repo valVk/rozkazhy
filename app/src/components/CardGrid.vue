@@ -59,7 +59,7 @@ main {
 }
 #emptyState {
   text-align: center;
-  color: var(--gray);
+  color: var(--mist);
   margin-top: 60px;
   font-size: 17px;
   line-height: 1.6;
