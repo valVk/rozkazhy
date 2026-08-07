@@ -64,4 +64,4 @@ jobs:
             --head "$BRANCH" \
             --title "chore: bump version to ${{ steps.next.outputs.tag }}" \
             --body "Automated version bump to match tag ${{ steps.next.outputs.tag }}."
-          gh pr merge "$BRANCH" --squash --auto
+          gh pr merge "$BRANCH" --squash --auto || gh pr merge "$BRANCH" --squash
