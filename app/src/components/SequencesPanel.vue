@@ -40,11 +40,13 @@ function onEditSaved() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">
-        <MdiIcon :path="mdiClose" :size="22" />
-      </button>
       <div class="sheet-body">
-        <h2>Послідовності</h2>
+        <div class="sheet-header">
+          <h2>Послідовності</h2>
+          <button class="sheet-close" @click="emit('close')">
+            <MdiIcon :path="mdiClose" :size="22" />
+          </button>
+        </div>
         <div v-if="sequences.length === 0" class="empty">
           Ще немає збережених послідовностей.
         </div>
@@ -108,20 +110,22 @@ function onEditSaved() {
 .sheet-body::-webkit-scrollbar {
   display: none;
 }
-.sheet-body h2 {
-  padding-right: 48px;
+.sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sheet-header h2 {
+  margin: 0;
 }
 .sheet-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 2;
+  flex-shrink: 0;
   width: 44px;
   height: 44px;
-  background: white;
+  background: none;
   border: none;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(43, 42, 51, 0.12);
   color: var(--mist);
   cursor: pointer;
   display: flex;
