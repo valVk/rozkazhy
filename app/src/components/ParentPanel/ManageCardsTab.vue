@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref, watchEffect } from "vue";
+import { mdiPencil, mdiTrashCan } from "@mdi/js";
 import { useCards } from "../../composables/useCards";
 import { resolveMediaUrl } from "../../composables/mediaUrl";
 import { useAppStore } from "../../stores/appStore";
+import MdiIcon from "../shared/MdiIcon.vue";
 import type { Card } from "../../types/card";
 
 const emit = defineEmits<{ (e: "edit", card: Card): void }>();
@@ -33,8 +35,12 @@ async function onDelete(card: Card) {
     <div v-for="card in cards" :key="card.id" class="card-list-item">
       <img v-if="thumbUrls[card.id]" :src="thumbUrls[card.id]!" />
       <div class="word">{{ card.title }}</div>
-      <button class="icon-btn" @click="emit('edit', card)">✏️</button>
-      <button class="icon-btn" @click="onDelete(card)">🗑</button>
+      <button class="icon-btn" @click="emit('edit', card)">
+        <MdiIcon :path="mdiPencil" :size="18" />
+      </button>
+      <button class="icon-btn" @click="onDelete(card)">
+        <MdiIcon :path="mdiTrashCan" :size="18" />
+      </button>
     </div>
   </div>
 </template>
@@ -70,7 +76,9 @@ async function onDelete(card: Card) {
   border-radius: 50%;
   border: none;
   background: #f2f2f2;
-  font-size: 18px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

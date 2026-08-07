@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { mdiContentSave, mdiPlay, mdiPause, mdiTrashCan } from "@mdi/js";
+import MdiIcon from "./shared/MdiIcon.vue";
+
 defineProps<{
   disabled: boolean;
   compact: boolean;
@@ -20,7 +23,7 @@ const emit = defineEmits<{
       title="Зберегти послідовність"
       @click="emit('save')"
     >
-      💾
+      <MdiIcon :path="mdiContentSave" :size="20" />
     </button>
     <button
       class="play-btn"
@@ -28,7 +31,7 @@ const emit = defineEmits<{
       :title="isPlaying ? 'Пауза' : 'Відтворити'"
       @click="isPlaying ? emit('pause') : emit('play')"
     >
-      {{ isPlaying ? "⏸" : "▶" }}
+      <MdiIcon :path="isPlaying ? mdiPause : mdiPlay" :size="32" />
     </button>
     <button
       class="side-btn clear-btn"
@@ -36,7 +39,7 @@ const emit = defineEmits<{
       title="Очистити"
       @click="emit('clear')"
     >
-      🗑
+      <MdiIcon :path="mdiTrashCan" :size="20" />
     </button>
   </div>
 </template>
@@ -63,7 +66,6 @@ const emit = defineEmits<{
   border: none;
   background: #4caf80;
   color: white;
-  font-size: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -71,14 +73,21 @@ const emit = defineEmits<{
   cursor: pointer;
   transition:
     width 0.25s ease,
-    height 0.25s ease,
-    font-size 0.25s ease;
+    height 0.25s ease;
+}
+.play-btn :deep(svg) {
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
 }
 .playbar.compact .play-btn {
   width: 38px;
   height: 38px;
-  font-size: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+.playbar.compact .play-btn :deep(svg) {
+  width: 20px;
+  height: 20px;
 }
 
 .side-btn {
@@ -87,20 +96,26 @@ const emit = defineEmits<{
   border-radius: 50%;
   border: none;
   color: white;
-  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition:
     width 0.25s ease,
-    height 0.25s ease,
-    font-size 0.25s ease;
+    height 0.25s ease;
+}
+.side-btn :deep(svg) {
+  transition:
+    width 0.25s ease,
+    height 0.25s ease;
 }
 .playbar.compact .side-btn {
   width: 30px;
   height: 30px;
-  font-size: 13px;
+}
+.playbar.compact .side-btn :deep(svg) {
+  width: 14px;
+  height: 14px;
 }
 .save-btn {
   background: var(--teal);

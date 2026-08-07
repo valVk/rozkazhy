@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { nextTick, ref, watch, watchEffect } from "vue";
+import { mdiGestureTapButton } from "@mdi/js";
 import type { Card } from "../types/card";
 import { resolveMediaUrl } from "../composables/mediaUrl";
+import MdiIcon from "./shared/MdiIcon.vue";
 
 const props = defineProps<{
   cards: Card[];
@@ -73,7 +75,8 @@ function onItemClick(index: number) {
         v-if="cards.length === 0"
         class="strip-empty-hint"
       >
-        Торкніться картки, щоб почати 👇
+        <MdiIcon :path="mdiGestureTapButton" :size="18" />
+        Торкніться картки, щоб почати
       </div>
       <div
         v-for="(card, i) in cards"
@@ -122,6 +125,9 @@ function onItemClick(index: number) {
   color: var(--gray);
   font-size: 15px;
   padding-left: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .strip-item {
   flex-shrink: 0;

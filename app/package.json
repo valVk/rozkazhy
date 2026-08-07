@@ -20,6 +20,7 @@
     "@capacitor/preferences": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.2",
     "@capacitor/status-bar": "^8.0.3",
+    "@mdi/js": "^7.4.47",
     "capacitor-voice-recorder": "^7.0.6",
     "jeep-sqlite": "^2.8.0",
     "pinia": "^4.0.2",

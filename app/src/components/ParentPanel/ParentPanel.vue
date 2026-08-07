@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { mdiChartBar, mdiClose, mdiCog, mdiFolder, mdiPlus } from "@mdi/js";
 import AddCardTab from "./AddCardTab.vue";
 import ManageCardsTab from "./ManageCardsTab.vue";
 import DashboardTab from "./DashboardTab.vue";
 import SettingsTab from "./SettingsTab.vue";
+import MdiIcon from "../shared/MdiIcon.vue";
 import type { Card } from "../../types/card";
 
 const emit = defineEmits<{ (e: "close"): void }>();
@@ -25,7 +27,9 @@ function onSaved() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">✕</button>
+      <button class="sheet-close" @click="emit('close')">
+        <MdiIcon :path="mdiClose" :size="22" />
+      </button>
       <h2>Панель дорослого</h2>
       <div class="tabs">
         <button
@@ -33,28 +37,31 @@ function onSaved() {
           :class="{ active: activeTab === 'add' }"
           @click="activeTab = 'add'; editingCard = null"
         >
-          ➕ Додати
+          <MdiIcon :path="mdiPlus" :size="16" />
+          Додати
         </button>
         <button
           class="tab-btn"
           :class="{ active: activeTab === 'manage' }"
           @click="activeTab = 'manage'"
         >
-          🗂 Картки
+          <MdiIcon :path="mdiFolder" :size="16" />
+          Картки
         </button>
         <button
           class="tab-btn"
           :class="{ active: activeTab === 'dashboard' }"
           @click="activeTab = 'dashboard'"
         >
-          📊 Дашборд
+          <MdiIcon :path="mdiChartBar" :size="16" />
+          Дашборд
         </button>
         <button
           class="tab-btn"
           :class="{ active: activeTab === 'settings' }"
           @click="activeTab = 'settings'"
         >
-          ⚙️
+          <MdiIcon :path="mdiCog" :size="16" />
         </button>
       </div>
 
@@ -95,9 +102,11 @@ function onSaved() {
   float: right;
   background: none;
   border: none;
-  font-size: 26px;
   color: var(--gray);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .tabs {
   display: flex;
@@ -114,6 +123,10 @@ function onSaved() {
   font-weight: 700;
   font-size: 14px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 .tab-btn.active {
   background: var(--pink);

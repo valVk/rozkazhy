@@ -64,7 +64,7 @@ function onSelectFrame(index: number) {
 
 async function onSaveSequence() {
   await saveCurrent(store.sentence);
-  store.showToast("Послідовність збережена ✓");
+  store.showToast("Послідовність збережена");
 }
 
 function onOpenSequences() {
