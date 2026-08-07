@@ -4,7 +4,11 @@ import { mdiPencil, mdiTrashCan } from "@mdi/js";
 import { useCards } from "../../composables/useCards";
 import { resolveMediaUrl } from "../../composables/mediaUrl";
 import { useAppStore } from "../../stores/appStore";
-import { useCardCategories } from "../../composables/useCardCategories";
+import {
+  CATEGORY_LABELS,
+  CATEGORY_ORDER,
+  useCardCategories,
+} from "../../composables/useCardCategories";
 import MdiIcon from "../shared/MdiIcon.vue";
 import CategoryPicker from "../shared/CategoryPicker.vue";
 import type { Card, CardCategory } from "../../types/card";
@@ -38,6 +42,12 @@ async function onDelete(card: Card) {
 
 <template>
   <div>
+    <div v-if="coloringEnabled" class="category-legend">
+      <span v-for="cat in CATEGORY_ORDER" :key="cat" class="legend-item">
+        <span class="legend-dot" :style="{ background: categoryColors[cat] }" />
+        {{ CATEGORY_LABELS[cat] }}
+      </span>
+    </div>
     <p v-if="cards.length === 0" class="empty">Ще немає карток.</p>
     <div v-for="card in cards" :key="card.id" class="card-list-item">
       <div class="row-top">
@@ -78,8 +88,30 @@ async function onDelete(card: Card) {
   gap: 12px;
 }
 .row-category {
-  margin-top: 8px;
+  margin-top: 10px;
+  padding-top: 8px;
   padding-left: 68px;
+  border-top: 1px solid rgba(43, 42, 51, 0.06);
+}
+.category-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  color: var(--mist);
+  font-size: 12px;
+}
+.legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 .card-list-item img {
   width: 56px;
