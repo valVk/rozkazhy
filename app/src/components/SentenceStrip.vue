@@ -95,23 +95,22 @@ function onItemClick(index: number) {
 <style scoped>
 #strip {
   flex-shrink: 0;
-  background: white;
-  border-bottom: 3px solid var(--sky);
-  padding: 6px 10px;
+  border-bottom: 1px solid rgba(43, 42, 51, 0.07);
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: padding 0.25s ease;
 }
 #strip.compact {
-  padding: 2px 8px;
+  padding: 4px 16px;
 }
 #stripScroll {
   flex: 1;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   overflow-x: auto;
-  min-height: 52px;
+  min-height: 56px;
   align-items: center;
   padding: 2px;
   touch-action: pan-x;
@@ -119,7 +118,7 @@ function onItemClick(index: number) {
   transition: min-height 0.25s ease;
 }
 #strip.compact #stripScroll {
-  min-height: 30px;
+  min-height: 34px;
 }
 .strip-empty-hint {
   color: var(--mist);
@@ -135,7 +134,7 @@ function onItemClick(index: number) {
   height: 48px;
   border-radius: 12px;
   overflow: hidden;
-  border: 2px solid var(--sky);
+  border: 1px solid rgba(43, 42, 51, 0.1);
   position: relative;
   background: #fff;
   transition:
@@ -147,7 +146,6 @@ function onItemClick(index: number) {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  border-width: 1px;
 }
 .strip-item.active {
   outline: 3px solid var(--sun);

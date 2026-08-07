@@ -50,12 +50,12 @@ function onScroll(e: Event) {
 main {
   flex: 1;
   overflow-y: auto;
-  padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
 }
 #grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 14px;
+  gap: 16px;
 }
 #emptyState {
   text-align: center;
