@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useSqlite } from "./useSqlite";
 import { deleteMediaFile } from "./mediaUrl";
 import * as cardsRepo from "../db/cardsRepository";
-import type { Card } from "../types/card";
+import type { Card, CardCategory } from "../types/card";
 
 const cards = ref<Card[]>([]);
 
@@ -18,15 +18,25 @@ export function useCards() {
     title: string;
     imagePath: string;
     audioPath: string | null;
+    category?: CardCategory | null;
   }): Promise<void> {
     const db = await getDb();
-    await cardsRepo.insertCard(db, data);
+    await cardsRepo.insertCard(db, { ...data, category: data.category ?? null });
     await refresh();
   }
 
   async function updateCardMeta(id: number, title: string): Promise<void> {
     const db = await getDb();
     await cardsRepo.updateCardMeta(db, id, { title });
+    await refresh();
+  }
+
+  async function updateCardCategory(
+    id: number,
+    category: CardCategory | null,
+  ): Promise<void> {
+    const db = await getDb();
+    await cardsRepo.updateCardCategory(db, id, category);
     await refresh();
   }
 
@@ -72,6 +82,7 @@ export function useCards() {
     refresh,
     addCard,
     updateCardMeta,
+    updateCardCategory,
     updateCardImage,
     updateCardAudio,
     incrementTapCount,

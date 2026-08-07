@@ -4,16 +4,23 @@ import { mdiPencil, mdiTrashCan } from "@mdi/js";
 import { useCards } from "../../composables/useCards";
 import { resolveMediaUrl } from "../../composables/mediaUrl";
 import { useAppStore } from "../../stores/appStore";
+import { useCardCategories } from "../../composables/useCardCategories";
 import MdiIcon from "../shared/MdiIcon.vue";
-import type { Card } from "../../types/card";
+import CategoryPicker from "../shared/CategoryPicker.vue";
+import type { Card, CardCategory } from "../../types/card";
 
 const emit = defineEmits<{ (e: "edit", card: Card): void }>();
 
-const { cards, refresh, deleteCard } = useCards();
+const { cards, refresh, deleteCard, updateCardCategory } = useCards();
 const store = useAppStore();
+const { coloringEnabled, categoryColors } = useCardCategories();
 const thumbUrls = ref<Record<number, string | null>>({});
 
 onMounted(refresh);
+
+async function onCategoryChange(card: Card, category: CardCategory | null) {
+  await updateCardCategory(card.id, category);
+}
 
 watchEffect(async () => {
   const entries = await Promise.all(
@@ -33,14 +40,24 @@ async function onDelete(card: Card) {
   <div>
     <p v-if="cards.length === 0" class="empty">Ще немає карток.</p>
     <div v-for="card in cards" :key="card.id" class="card-list-item">
-      <img v-if="thumbUrls[card.id]" :src="thumbUrls[card.id]!" />
-      <div class="word">{{ card.title }}</div>
-      <button class="icon-btn" @click="emit('edit', card)">
-        <MdiIcon :path="mdiPencil" :size="18" />
-      </button>
-      <button class="icon-btn" @click="onDelete(card)">
-        <MdiIcon :path="mdiTrashCan" :size="18" />
-      </button>
+      <div class="row-top">
+        <img v-if="thumbUrls[card.id]" :src="thumbUrls[card.id]!" />
+        <div class="word">{{ card.title }}</div>
+        <button class="icon-btn" @click="emit('edit', card)">
+          <MdiIcon :path="mdiPencil" :size="18" />
+        </button>
+        <button class="icon-btn" @click="onDelete(card)">
+          <MdiIcon :path="mdiTrashCan" :size="18" />
+        </button>
+      </div>
+      <CategoryPicker
+        v-if="coloringEnabled"
+        class="row-category"
+        compact
+        :model-value="card.category"
+        :colors="categoryColors"
+        @update:model-value="(cat) => onCategoryChange(card, cat)"
+      />
     </div>
   </div>
 </template>
@@ -50,13 +67,19 @@ async function onDelete(card: Card) {
   color: var(--mist);
 }
 .card-list-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   background: white;
   border-radius: 16px;
   padding: 10px;
   margin-bottom: 10px;
+}
+.row-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.row-category {
+  margin-top: 8px;
+  padding-left: 68px;
 }
 .card-list-item img {
   width: 56px;

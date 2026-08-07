@@ -1,5 +1,5 @@
 export const DB_NAME = "rozkazhy_db";
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
 export const UPGRADE_STATEMENTS = [
   {
@@ -45,6 +45,14 @@ export const UPGRADE_STATEMENTS = [
         card_id INTEGER NOT NULL REFERENCES cards(id) ON DELETE CASCADE
       );`,
       `CREATE INDEX IF NOT EXISTS idx_sequence_items_seq ON sequence_items(sequence_id);`,
+    ],
+  },
+  {
+    toVersion: 2,
+    statements: [
+      // Nullable — optional word-category tag for the Fitzgerald-key color
+      // coding feature. Existing cards keep NULL until a parent tags them.
+      `ALTER TABLE cards ADD COLUMN category TEXT;`,
     ],
   },
 ];

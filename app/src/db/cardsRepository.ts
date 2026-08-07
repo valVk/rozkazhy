@@ -1,11 +1,12 @@
 import type { SQLiteDBConnection } from "@capacitor-community/sqlite";
-import type { Card } from "../types/card";
+import type { Card, CardCategory } from "../types/card";
 
 interface CardRow {
   id: number;
   title: string;
   image_path: string;
   audio_path: string | null;
+  category: string | null;
   tap_count: number;
   created_at: number;
   updated_at: number;
@@ -17,6 +18,7 @@ function rowToCard(row: CardRow): Card {
     title: row.title,
     imagePath: row.image_path,
     audioPath: row.audio_path,
+    category: (row.category as CardCategory | null) ?? null,
     tapCount: row.tap_count,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -30,15 +32,32 @@ export async function getAllCards(db: SQLiteDBConnection): Promise<Card[]> {
 
 export async function insertCard(
   db: SQLiteDBConnection,
-  data: { title: string; imagePath: string; audioPath: string | null },
+  data: {
+    title: string;
+    imagePath: string;
+    audioPath: string | null;
+    category: CardCategory | null;
+  },
 ): Promise<number> {
   const now = Date.now();
   const res = await db.run(
-    `INSERT INTO cards (title, image_path, audio_path, tap_count, created_at, updated_at)
-     VALUES (?, ?, ?, 0, ?, ?);`,
-    [data.title, data.imagePath, data.audioPath, now, now],
+    `INSERT INTO cards (title, image_path, audio_path, category, tap_count, created_at, updated_at)
+     VALUES (?, ?, ?, ?, 0, ?, ?);`,
+    [data.title, data.imagePath, data.audioPath, data.category, now, now],
   );
   return res.changes?.lastId ?? -1;
+}
+
+export async function updateCardCategory(
+  db: SQLiteDBConnection,
+  id: number,
+  category: CardCategory | null,
+): Promise<void> {
+  await db.run(`UPDATE cards SET category = ?, updated_at = ? WHERE id = ?;`, [
+    category,
+    Date.now(),
+    id,
+  ]);
 }
 
 export async function updateCardMeta(

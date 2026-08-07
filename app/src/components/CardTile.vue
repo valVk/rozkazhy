@@ -1,13 +1,21 @@
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import type { Card } from "../types/card";
 import { resolveMediaUrl } from "../composables/mediaUrl";
+import { useCardCategories } from "../composables/useCardCategories";
 
 const props = defineProps<{ card: Card }>();
 const emit = defineEmits<{ (e: "tap", card: Card): void }>();
 
+const { coloringEnabled, categoryColors } = useCardCategories();
+
 const imageUrl = ref<string | null>(null);
 const glow = ref(false);
+
+const categoryColor = computed(() => {
+  if (!coloringEnabled.value || !props.card.category) return null;
+  return categoryColors.value[props.card.category];
+});
 
 watchEffect(async () => {
   imageUrl.value = await resolveMediaUrl(props.card.imagePath);
@@ -22,6 +30,11 @@ function onTap() {
 
 <template>
   <button class="card" :class="{ 'active-glow': glow }" @click="onTap">
+    <div
+      v-if="categoryColor"
+      class="category-stripe"
+      :style="{ background: categoryColor }"
+    />
     <img v-if="imageUrl" class="thumb" :src="imageUrl" :alt="card.title" />
     <div v-else class="thumb thumb-placeholder"></div>
     <div class="label">{{ card.title }}</div>
@@ -47,6 +60,11 @@ function onTap() {
 .card:active {
   transform: scale(0.96);
   box-shadow: 0 1px 2px rgba(43, 42, 51, 0.06);
+}
+.category-stripe {
+  height: 6px;
+  width: 100%;
+  flex-shrink: 0;
 }
 .thumb {
   width: 100%;

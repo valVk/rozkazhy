@@ -85,26 +85,21 @@ function onSaved() {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(20, 20, 30, 0.55);
+  background: var(--paper);
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
   z-index: 50;
 }
 .sheet {
   position: relative;
   background: var(--paper);
   width: 100%;
-  max-width: 520px;
-  max-height: 92vh;
-  border-radius: 26px 26px 0 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 .sheet-body {
   overflow-y: auto;
-  padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
   scrollbar-width: none;
 }
 .sheet-body::-webkit-scrollbar {
