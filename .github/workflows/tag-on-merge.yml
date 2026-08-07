@@ -7,10 +7,16 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   tag:
-    if: github.event.pull_request.merged == true
+    # Skip when the merged PR is itself a version-bump PR opened by this
+    # workflow below — otherwise each bump-PR merge would trigger another
+    # tag + another bump PR, forever.
+    if: |
+      github.event.pull_request.merged == true &&
+      !startsWith(github.event.pull_request.head.ref, 'chore/version-bump-')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,3 +42,26 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag "${{ steps.next.outputs.tag }}"
           git push origin "${{ steps.next.outputs.tag }}"
+
+      - name: Open version bump PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd app
+          npm version "${{ steps.next.outputs.tag }}" --no-git-tag-version --allow-same-version
+          cd ..
+          git add app/package.json app/package-lock.json
+          if git diff --cached --quiet; then
+            echo "package.json already at ${{ steps.next.outputs.tag }}, nothing to bump"
+            exit 0
+          fi
+          BRANCH="chore/version-bump-${{ steps.next.outputs.tag }}"
+          git checkout -b "$BRANCH"
+          git commit -m "chore: bump version to ${{ steps.next.outputs.tag }}"
+          git push origin "$BRANCH"
+          gh pr create \
+            --base "${{ github.event.repository.default_branch }}" \
+            --head "$BRANCH" \
+            --title "chore: bump version to ${{ steps.next.outputs.tag }}" \
+            --body "Automated version bump to match tag ${{ steps.next.outputs.tag }}."
+          gh pr merge "$BRANCH" --squash --auto
