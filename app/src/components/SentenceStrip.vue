@@ -121,11 +121,12 @@ function onItemClick(index: number) {
   min-height: 34px;
 }
 .strip-empty-hint {
+  flex: 1;
   color: var(--mist);
   font-size: 15px;
-  padding-left: 6px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
 }
 .strip-item {
