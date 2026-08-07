@@ -21,7 +21,7 @@ async function onDownload() {
       <button class="sheet-close" @click="emit('close')">
         <MdiIcon :path="mdiClose" :size="22" />
       </button>
-      <h2>Доступна нова версія</h2>
+      <h2 class="title">Доступна нова версія</h2>
       <p class="body">
         Встановлена версія: {{ currentVersion }}<br />
         Нова версія: {{ latestVersion }}
@@ -45,6 +45,7 @@ async function onDownload() {
   z-index: 70;
 }
 .sheet {
+  position: relative;
   background: var(--paper);
   width: 100%;
   max-width: 520px;
@@ -52,18 +53,24 @@ async function onDownload() {
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
   width: 44px;
   height: 44px;
-  background: none;
+  background: white;
   border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(43, 42, 51, 0.12);
   color: var(--mist);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.title {
+  padding-right: 48px;
 }
 .body {
   color: var(--ink);

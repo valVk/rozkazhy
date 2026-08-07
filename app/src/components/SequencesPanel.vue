@@ -43,28 +43,30 @@ function onEditSaved() {
       <button class="sheet-close" @click="emit('close')">
         <MdiIcon :path="mdiClose" :size="22" />
       </button>
-      <h2>Послідовності</h2>
-      <div v-if="sequences.length === 0" class="empty">
-        Ще немає збережених послідовностей.
-      </div>
-      <div v-for="seq in sequences" :key="seq.id" class="seq-item">
-        <button class="seq-body" @click="onReplay(seq)">
-          <span class="seq-name">{{ seqTitle(seq) }}</span>
-          <span class="seq-meta">Використано: {{ seq.usageCount }}</span>
-        </button>
-        <button
-          class="icon-btn"
-          :class="{ active: seq.isFavorite }"
-          @click="toggleFavorite(seq.id, !seq.isFavorite)"
-        >
-          <MdiIcon :path="seq.isFavorite ? mdiStar : mdiStarOutline" :size="18" />
-        </button>
-        <button class="icon-btn" @click="editingSequence = seq">
-          <MdiIcon :path="mdiPencil" :size="18" />
-        </button>
-        <button class="icon-btn" @click="remove(seq.id)">
-          <MdiIcon :path="mdiTrashCan" :size="18" />
-        </button>
+      <div class="sheet-body">
+        <h2>Послідовності</h2>
+        <div v-if="sequences.length === 0" class="empty">
+          Ще немає збережених послідовностей.
+        </div>
+        <div v-for="seq in sequences" :key="seq.id" class="seq-item">
+          <button class="seq-body" @click="onReplay(seq)">
+            <span class="seq-name">{{ seqTitle(seq) }}</span>
+            <span class="seq-meta">Використано: {{ seq.usageCount }}</span>
+          </button>
+          <button
+            class="icon-btn"
+            :class="{ active: seq.isFavorite }"
+            @click="toggleFavorite(seq.id, !seq.isFavorite)"
+          >
+            <MdiIcon :path="seq.isFavorite ? mdiStar : mdiStarOutline" :size="18" />
+          </button>
+          <button class="icon-btn" @click="editingSequence = seq">
+            <MdiIcon :path="mdiPencil" :size="18" />
+          </button>
+          <button class="icon-btn" @click="remove(seq.id)">
+            <MdiIcon :path="mdiTrashCan" :size="18" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -88,22 +90,38 @@ function onEditSaved() {
   z-index: 50;
 }
 .sheet {
+  position: relative;
   background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
-  overflow-y: auto;
   border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-body {
+  overflow-y: auto;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+.sheet-body h2 {
+  padding-right: 48px;
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
   width: 44px;
   height: 44px;
-  background: none;
+  background: white;
   border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(43, 42, 51, 0.12);
   color: var(--mist);
   cursor: pointer;
   display: flex;

@@ -92,36 +92,38 @@ async function onSave() {
       <button class="sheet-close" @click="emit('close')">
         <MdiIcon :path="mdiClose" :size="22" />
       </button>
-      <h2>Редагувати послідовність</h2>
-      <p class="hint">Перетягніть за ручку, щоб змінити порядок, або видаліть картку.</p>
+      <div class="sheet-body">
+        <h2>Редагувати послідовність</h2>
+        <p class="hint">Перетягніть за ручку, щоб змінити порядок, або видаліть картку.</p>
 
-      <div v-if="rows.length === 0" class="empty">
-        Усі картки видалено. Збереження видалить послідовність.
-      </div>
+        <div v-if="rows.length === 0" class="empty">
+          Усі картки видалено. Збереження видалить послідовність.
+        </div>
 
-      <div
-        v-for="(row, index) in rows"
-        :key="row.itemId"
-        :ref="(el) => (rowEls[index] = el as HTMLElement | null)"
-        class="edit-row"
-        :class="{ dragging: draggingIndex === index }"
-      >
-        <button class="drag-handle" @pointerdown="onHandlePointerDown(index, $event)">
-          <MdiIcon :path="mdiDragVertical" :size="22" />
-        </button>
-        <img v-if="row.imageUrl" :src="row.imageUrl" class="thumb" />
-        <span class="row-title">{{ row.title }}</span>
-        <button class="icon-btn" @click="removeRow(index)">
-          <MdiIcon :path="mdiClose" :size="18" />
-        </button>
-      </div>
+        <div
+          v-for="(row, index) in rows"
+          :key="row.itemId"
+          :ref="(el) => (rowEls[index] = el as HTMLElement | null)"
+          class="edit-row"
+          :class="{ dragging: draggingIndex === index }"
+        >
+          <button class="drag-handle" @pointerdown="onHandlePointerDown(index, $event)">
+            <MdiIcon :path="mdiDragVertical" :size="22" />
+          </button>
+          <img v-if="row.imageUrl" :src="row.imageUrl" class="thumb" />
+          <span class="row-title">{{ row.title }}</span>
+          <button class="icon-btn" @click="removeRow(index)">
+            <MdiIcon :path="mdiClose" :size="18" />
+          </button>
+        </div>
 
-      <div class="row" style="margin-top: 16px">
-        <button class="btn btn-secondary" @click="emit('close')">Скасувати</button>
-        <button class="btn btn-primary" style="margin-top: 0" :disabled="saving" @click="onSave">
-          <MdiIcon :path="mdiContentSave" :size="18" />
-          Зберегти
-        </button>
+        <div class="row" style="margin-top: 16px">
+          <button class="btn btn-secondary" @click="emit('close')">Скасувати</button>
+          <button class="btn btn-primary" style="margin-top: 0" :disabled="saving" @click="onSave">
+            <MdiIcon :path="mdiContentSave" :size="18" />
+            Зберегти
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -138,22 +140,38 @@ async function onSave() {
   z-index: 60;
 }
 .sheet {
+  position: relative;
   background: var(--paper);
   width: 100%;
   max-width: 520px;
   max-height: 92vh;
-  overflow-y: auto;
   border-radius: 26px 26px 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sheet-body {
+  overflow-y: auto;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
+  scrollbar-width: none;
+}
+.sheet-body::-webkit-scrollbar {
+  display: none;
+}
+.sheet-body h2 {
+  padding-right: 48px;
 }
 .sheet-close {
-  position: sticky;
-  top: 0;
-  float: right;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
   width: 44px;
   height: 44px;
-  background: none;
+  background: white;
   border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(43, 42, 51, 0.12);
   color: var(--mist);
   cursor: pointer;
   display: flex;
