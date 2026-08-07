@@ -69,6 +69,32 @@ export const SWATCH_TEXT_COLOR: Record<string, "light" | "dark"> = {
   "#A55138": "light",
 };
 
+function relativeLuminance(hex: string): number {
+  const toLinear = (c: number) => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  const r = toLinear(parseInt(hex.slice(1, 3), 16));
+  const g = toLinear(parseInt(hex.slice(3, 5), 16));
+  const b = toLinear(parseInt(hex.slice(5, 7), 16));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+// Whichever of the two label tones actually passes WCAG AA against a given
+// background color — a flat "colored = always light text" rule fails
+// contrast for lighter presets like gold or teal. Shared by CardTile and
+// the category filter chips so both stay in sync.
+export function getContrastTextColor(hex: string): string {
+  const known = SWATCH_TEXT_COLOR[hex.toUpperCase()];
+  if (known) return known === "light" ? LABEL_TEXT_LIGHT : LABEL_TEXT_DARK;
+  const l = relativeLuminance(hex);
+  const lightLuminance = relativeLuminance(LABEL_TEXT_LIGHT);
+  const darkLuminance = relativeLuminance(LABEL_TEXT_DARK);
+  const contrastLight = (lightLuminance + 0.05) / (l + 0.05);
+  const contrastDark = (l + 0.05) / (darkLuminance + 0.05);
+  return contrastLight >= contrastDark ? LABEL_TEXT_LIGHT : LABEL_TEXT_DARK;
+}
+
 const coloringEnabled = ref(false);
 const categoryColors = ref<Record<CardCategory, string>>({
   ...DEFAULT_CATEGORY_COLORS,
