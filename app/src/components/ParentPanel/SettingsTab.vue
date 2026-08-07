@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { mdiContentSave } from "@mdi/js";
+import { mdiAlertCircle, mdiContentSave } from "@mdi/js";
 import { useSequences } from "../../composables/useSequences";
 import { useAppStore } from "../../stores/appStore";
+import { useUpdateCheck } from "../../composables/useUpdateCheck";
 import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
@@ -10,9 +11,13 @@ import {
   useCardCategories,
 } from "../../composables/useCardCategories";
 import MdiIcon from "../shared/MdiIcon.vue";
+import UpdateModal from "../UpdateModal.vue";
+
+defineProps<{ updateAvailable: boolean }>();
 
 const { getFavoriteThreshold, setFavoriteThreshold } = useSequences();
 const store = useAppStore();
+const { latestVersion } = useUpdateCheck();
 const {
   coloringEnabled,
   categoryColors,
@@ -22,6 +27,7 @@ const {
 } = useCardCategories();
 
 const threshold = ref(5);
+const updateModalOpen = ref(false);
 
 onMounted(async () => {
   threshold.value = await getFavoriteThreshold();
@@ -49,6 +55,15 @@ async function onResetColors() {
 
 <template>
   <div>
+    <button
+      v-if="updateAvailable"
+      class="update-banner"
+      @click="updateModalOpen = true"
+    >
+      <MdiIcon :path="mdiAlertCircle" :size="20" />
+      <span>Доступна нова версія {{ latestVersion }} — натисніть, щоб оновити</span>
+    </button>
+
     <label class="field-label">
       Автоматично позначати послідовність улюбленою після N відтворень
     </label>
@@ -92,10 +107,29 @@ async function onResetColors() {
         Скинути кольори до типових
       </button>
     </template>
+
+    <UpdateModal v-if="updateModalOpen" @close="updateModalOpen = false" />
   </div>
 </template>
 
 <style scoped>
+.update-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 14px;
+  background: var(--signal);
+  color: white;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+}
 .hint {
   color: var(--mist);
   font-size: 14px;

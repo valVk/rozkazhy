@@ -7,7 +7,6 @@ import CardGrid from "./components/CardGrid.vue";
 import PinLockScreen from "./components/PinLockScreen.vue";
 import SequencesPanel from "./components/SequencesPanel.vue";
 import ParentPanel from "./components/ParentPanel/ParentPanel.vue";
-import UpdateModal from "./components/UpdateModal.vue";
 import ShToast from "./components/shared/Toast.vue";
 import { useAppStore } from "./stores/appStore";
 import { useCards } from "./composables/useCards";
@@ -28,7 +27,6 @@ const { load: loadCardCategories } = useCardCategories();
 
 const pinScreenVisible = ref(false);
 const isCompact = ref(false);
-const updateModalOpen = ref(false);
 
 onMounted(refresh);
 onMounted(checkForUpdate);
@@ -100,10 +98,6 @@ function onPinUnlocked() {
 function onPinCancel() {
   pinScreenVisible.value = false;
 }
-
-function onOpenUpdate() {
-  updateModalOpen.value = true;
-}
 </script>
 
 <template>
@@ -112,7 +106,6 @@ function onOpenUpdate() {
       :update-available="updateAvailable"
       @open-parent="onOpenParent"
       @open-sequences="onOpenSequences"
-      @open-update="onOpenUpdate"
     />
     <div class="composer">
       <SentenceStrip
@@ -144,13 +137,16 @@ function onOpenUpdate() {
       @unlocked="onPinUnlocked"
       @cancel="onPinCancel"
     />
-    <ParentPanel v-if="store.parentPanelOpen" @close="store.closeParentPanel" />
+    <ParentPanel
+      v-if="store.parentPanelOpen"
+      :update-available="updateAvailable"
+      @close="store.closeParentPanel"
+    />
     <SequencesPanel
       v-if="store.sequencesPanelOpen"
       @close="store.sequencesPanelOpen = false"
       @replay="onReplaySequence"
     />
-    <UpdateModal v-if="updateModalOpen" @close="updateModalOpen = false" />
     <ShToast />
   </div>
 </template>

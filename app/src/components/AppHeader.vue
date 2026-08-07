@@ -9,7 +9,6 @@ let pressTimer: ReturnType<typeof setTimeout> | null = null;
 const emit = defineEmits<{
   (e: "openParent"): void;
   (e: "openSequences"): void;
-  (e: "openUpdate"): void;
 }>();
 
 function start(e: Event) {
@@ -46,14 +45,9 @@ function cancel() {
         >
           <MdiIcon :path="mdiCog" :size="22" />
         </button>
-        <button
-          v-if="updateAvailable"
-          id="updateBadge"
-          aria-label="Доступна нова версія"
-          @click="emit('openUpdate')"
-        >
+        <span v-if="updateAvailable" id="updateBadge" aria-hidden="true">
           <MdiIcon :path="mdiAlertCircle" :size="14" />
-        </button>
+        </span>
       </div>
     </div>
   </header>
@@ -105,11 +99,15 @@ header h1 {
   right: -6px;
   width: 24px;
   height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 50%;
   background: var(--signal);
   color: white;
   border: 2px solid var(--bloom);
   padding: 0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
 }
 </style>

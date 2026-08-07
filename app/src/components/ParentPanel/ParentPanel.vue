@@ -8,6 +8,7 @@ import SettingsTab from "./SettingsTab.vue";
 import MdiIcon from "../shared/MdiIcon.vue";
 import type { Card } from "../../types/card";
 
+defineProps<{ updateAvailable: boolean }>();
 const emit = defineEmits<{ (e: "close"): void }>();
 
 const activeTab = ref<"add" | "manage" | "dashboard" | "settings">("add");
@@ -60,11 +61,12 @@ function onSaved() {
             Дашборд
           </button>
           <button
-            class="tab-btn"
+            class="tab-btn settings-tab-btn"
             :class="{ active: activeTab === 'settings' }"
             @click="activeTab = 'settings'"
           >
             <MdiIcon :path="mdiCog" :size="16" />
+            <span v-if="updateAvailable" class="tab-badge" aria-hidden="true" />
           </button>
         </div>
 
@@ -75,7 +77,7 @@ function onSaved() {
         />
         <ManageCardsTab v-else-if="activeTab === 'manage'" @edit="startEdit" />
         <DashboardTab v-else-if="activeTab === 'dashboard'" />
-        <SettingsTab v-else-if="activeTab === 'settings'" />
+        <SettingsTab v-else-if="activeTab === 'settings'" :update-available="updateAvailable" />
       </div>
     </div>
   </div>
@@ -151,5 +153,21 @@ function onSaved() {
 .tab-btn.active {
   background: var(--bloom);
   color: white;
+}
+.settings-tab-btn {
+  position: relative;
+}
+.tab-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--signal);
+  border: 2px solid white;
+}
+.tab-btn.active .tab-badge {
+  border-color: var(--bloom);
 }
 </style>
