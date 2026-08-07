@@ -7,29 +7,35 @@
 ### Що є всередині
 
 - **Картки спілкування**: фото предмета/дії + слово, записане голосом дорослого
-- **Стрічка речення**: послідовне додавання карток, відтворення "речення" одним натисканням, очищення
+- **Стрічка речення**: послідовне додавання карток, відтворення "речення" одним натисканням, пауза/продовження з обраної картки, очищення
 - **Послідовності**: збереження стрічки як готової послідовності для повторного відтворення; позначення "улюбленою" вручну або автоматично після N відтворень (поріг налаштовується)
-- **Панель для дорослих** (за 4-значним PIN, довге натискання на ⚙️):
-  - Додавання картки: фото з камери або галереї, запис голосу (нативний рекордер) або завантаження аудіофайлу
-  - Управління картками: редагування, видалення, окрема заміна фото чи голосу без перестворення картки
+- **Кольорове кодування карток за типом слова** (опціонально, вимкнено за замовчуванням): позначення карток кольором за системою, схожою на ту, якою часто користуються логопеди — детальніше нижче
+- **Сповіщення про оновлення застосунку**: якщо вийшла нова версія, застосунок сам про це повідомляє і пропонує завантажити її
+- **Панель для дорослих** (за 4-значним PIN, довге натискання на іконку-шестерню):
+  - Додавання картки: фото з камери або галереї, запис голосу (нативний рекордер) або завантаження аудіофайлу, необов'язковий тип слова для кольорового кодування
+  - Управління картками: редагування, видалення, окрема заміна фото чи голосу без перестворення картки, призначення/зміна типу слова заднім числом, фільтр за типом слова
   - Дашборд: найчастіше вживані слова, останні 20 відтворених речень
-  - Налаштування: поріг автоматичного улюбленого для послідовностей
+  - Налаштування: поріг автоматичного улюбленого для послідовностей, увімкнення й налаштування кольорового кодування карток
 - Дані та медіафайли (фото/аудіо) зберігаються локально на пристрої — SQLite для записів, окремі файли для фото та аудіо. Немає хмарної синхронізації.
 
 ### Як користуватися застосунком
 
 #### Головний екран (для дитини)
 
-- **Верхня панель**: назва "👋 Розкажи" зліва; праворуч — кнопка **⭐** (відкриває збережені послідовності) та кнопка **⚙️** (шестерня — довге натискання ~0.7 с відкриває панель для дорослих через PIN-код; коротке натискання нічого не робить).
-- **Стрічка речення** (біла смуга під верхньою панеллю): порожня стрічка показує підказку "Торкніться картки, щоб почати". Праворуч стрічки три круглі кнопки:
-  - **💾** — зберегти поточну стрічку як послідовність для повторного відтворення (неактивна, якщо стрічка порожня).
-  - **▶** — відтворити всю стрічку по черзі (кожна картка озвучується з невеликою паузою між ними), після відтворення речення записується в лог дашборду (неактивна, якщо стрічка порожня).
-  - **🗑** — очистити стрічку (неактивна, якщо стрічка порожня).
-- **Сітка карток** (основна область екрана): дотик на картку — картка додається у стрічку, одразу програється її голос (записаний або синтезований), і лічильник використання картки збільшується на 1. Якщо карток ще немає, показується підказка звернутися до дорослого.
+- **Верхня панель**: назва "Розкажи" зліва; праворуч — кнопка із зіркою (відкриває збережені послідовності) та кнопка-шестерня (довге натискання ~0.7 с відкриває панель для дорослих через PIN-код; коротке натискання нічого не робить). Якщо доступна нова версія застосунку, на шестерні з'являється маленький червоний індикатор — він лише інформує, натискати на нього окремо не потрібно; деталі та кнопка завантаження — у панелі дорослого (вкладка Налаштування).
+- **Стрічка речення та кнопки керування** — об'єднані в одну панель під верхньою панеллю. Порожня стрічка показує підказку по центру "Торкніться картки, щоб почати". Три кнопки під стрічкою:
+  - **Дискета (зліва)** — зберегти поточну стрічку як послідовність для повторного відтворення (неактивна, якщо стрічка порожня).
+  - **Велика кругла кнопка по центру** — відтворити всю стрічку по черзі; під час відтворення та сама кнопка стає кнопкою паузи. Картка, що звучить зараз, підсвічується жовтою рамкою і автоматично прокручується у видиму область, якщо стрічка не вміщується цілком. Після повного відтворення речення записується в лог дашборду. Під час паузи можна торкнутися будь-якої картки в стрічці, щоб продовжити відтворення саме з неї.
+  - **Кошик (справа)** — очистити стрічку (неактивна, якщо стрічка порожня; також зупиняє відтворення, якщо воно триває).
+- **Сітка карток** (основна область екрана):
+  - Якщо кольорове кодування карток увімкнено (див. Налаштування), над сіткою з'являється рядок кольорових кнопок-фільтрів — "Усі" (скидає фільтр) та по одній кнопці на кожен тип слова (Людина/Дія/Предмет/Ознака/Соціальна фраза). Торкніться кольору, щоб показати лише картки цього типу; торкніться "Усі", щоб знову побачити всі картки.
+  - Дотик на картку — картка додається у стрічку, одразу програється її голос (записаний або синтезований), і лічильник використання картки збільшується на 1.
+  - Картки з призначеним типом слова мають суцільний колір під назвою картки (колір відповідає типу слова) з автоматично підібраним контрастним кольором тексту, щоб назва завжди легко читалась.
+  - Якщо карток ще немає, показується підказка звернутися до дорослого.
 
 #### PIN-екран (доступ до панелі дорослого)
 
-- Відкривається довгим натисканням на **⚙️**.
+- Відкривається довгим натисканням на шестерню.
 - **Перший запуск**: екран просить створити 4-значний PIN — введіть 4 цифри на цифровій клавіатурі, вони одразу зберігаються (у вигляді хешу) і панель дорослого відкривається.
 - **Наступні рази**: введіть той самий PIN. Невірний код показує повідомлення "Невірний PIN" і скидає введені цифри.
 - Кнопка **⌫** на клавіатурі стирає останню цифру.
@@ -37,52 +43,57 @@
 
 #### Панель для дорослих
 
-Складається з чотирьох вкладок угорі (**➕ Додати**, **🗂 Картки**, **📊 Дашборд**, **⚙️**) та кнопки **✕** для закриття всієї панелі.
+Тепер відкривається **на весь екран** (а не спливаючим вікном знизу). Чотири вкладки зверху (Додати, Картки, Дашборд, Налаштування) та кнопка закриття поруч із заголовком — вона прокручується разом із вмістом вкладки, а не залишається "прилиплою". Якщо доступна нова версія застосунку — на вкладці Налаштування з'являється такий самий маленький червоний індикатор, як і на головному екрані.
 
-**Вкладка ➕ Додати** (створення нової картки або редагування наявної):
+**Вкладка "Додати"** (створення нової картки або редагування наявної):
 
-- **Фото предмета**: попередній перегляд фото (сірий прямокутник "Немає фото", якщо ще нічого не обрано).
-  - **📷 Камера** — відкриває камеру пристрою, зробити фото.
-  - **🖼 Галерея** — обрати наявне зображення з галереї телефону.
+- **Фото предмета**: попередній перегляд фото ("Немає фото", якщо ще нічого не обрано).
+  - **Камера** — відкриває камеру пристрою, зробити фото.
+  - **Галерея** — обрати наявне зображення з галереї телефону.
 - **Слово або фраза**: текстове поле для назви картки (обов'язкове; саме цей текст озвучується синтезованим голосом, якщо немає запису).
-- **🔊 Прослухати, як говоритиме картка**: програє поточний запис голосу, якщо він уже є, або синтезований голос введеного слова — зручно перевірити звучання ще до збереження картки.
+- **Тип слова** (з'являється лише якщо в Налаштуваннях увімкнено кольорове кодування карток): ряд кольорових кнопок — Людина, Дія, Предмет, Ознака, Соціальна фраза — та кнопка "Без категорії". Обраний тип визначає колір картки в сітці.
+- **"Прослухати, як говоритиме картка"**: програє поточний запис голосу, якщо він уже є, або синтезований голос введеного слова — зручно перевірити звучання ще до збереження картки.
 - **Голос дорослого**:
-  - **🎙 Записати / ⏹ Зупинити запис** — натисніть, щоб почати запис голосу мікрофоном (застосунок попросить дозвіл на використання мікрофона при першому запуску), натисніть ще раз (кнопка стане червоною і матиме напис "Зупинити запис"), щоб зупинити й зберегти запис.
-  - **📁 Файл** — обрати вже наявний аудіофайл із пристрою замість запису.
+  - **Записати / Зупинити запис** — натисніть, щоб почати запис голосу мікрофоном (застосунок попросить дозвіл на використання мікрофона при першому запуску), натисніть ще раз, щоб зупинити й зберегти запис.
+  - **Файл** — обрати вже наявний аудіофайл із пристрою замість запису.
   - Після запису/вибору файлу з'являється звичайний аудіоплеєр для прослуховування.
-- **💾 Зберегти картку** (або **💾 Зберегти зміни** в режимі редагування): зберігає картку. Для нової картки обов'язкові слово та фото; голос — необов'язковий (буде використано синтез мовлення). У режимі редагування можна змінити лише фото, лише голос або лише текст — решта полів залишиться без змін.
+- **Зберегти картку** (або **Зберегти зміни** в режимі редагування): зберігає картку. Для нової картки обов'язкові слово та фото; голос і тип слова — необов'язкові. У режимі редагування можна змінити лише фото, лише голос, лише текст або лише тип слова — решта полів залишиться без змін.
 
-**Вкладка 🗂 Картки** (управління наявними картками):
+**Вкладка "Картки"** (управління наявними картками):
 
-- Список усіх карток із мініатюрою та назвою.
-- **✏️** — відкриває картку у вкладці "Додати" для редагування (фото, голос чи текст можна замінити окремо, без пересворення картки).
-- **🗑** — видаляє картку (з підтвердженням через діалогове вікно); видаляються також файли фото та аудіо цієї картки.
+- Якщо кольорове кодування ввімкнено — над списком з'являється той самий рядок кольорових фільтрів, що й на головному екрані, і список повідомляє окремо "Немає карток цього типу", якщо фільтр не дав результатів (на відміну від "Ще немає карток", коли карток узагалі немає).
+- Список усіх (або відфільтрованих) карток із мініатюрою та назвою, кнопкою редагування (олівець) і кнопкою видалення (кошик, з підтвердженням через діалогове вікно — видаляються також файли фото та аудіо цієї картки).
+- Якщо кольорове кодування ввімкнено — під кожною карткою: тонка розділювальна лінія, короткий підпис із поточним типом слова цієї картки (або "Без категорії") і ряд маленьких кольорових кружечків. Торкніться кружечка, щоб одразу призначити чи змінити тип слова цій картці, без відкриття вкладки редагування — це основний спосіб проставити тип слова вже наявним карткам після ввімкнення функції.
 
-**Вкладка 📊 Дашборд** (статистика):
+**Вкладка "Дашборд"** (статистика):
 
 - **Найчастіші слова**: список карток, відсортований за кількістю натискань (лічильник праворуч кожного слова).
 - **Останні речення**: до 20 останніх відтворених речень зі стрічки, з датою/часом і словами через " • ".
 
-**Вкладка ⚙️ (Налаштування)**:
+**Вкладка "Налаштування"**:
 
-- Поле для порогу автоматичного "улюблення" послідовностей — число, скільки разів треба відтворити послідовність, щоб вона автоматично отримала позначку ⭐ (за замовчуванням 5).
-- **💾 Зберегти** — зберігає нове значення порогу.
+- Якщо доступна нова версія застосунку — вгорі з'являється помітний червоний банер "Доступна нова версія X.Y.Z — натисніть, щоб оновити". Дотик відкриває вікно з версією та кнопкою "Завантажити оновлення", яка відкриває сторінку завантаження у системному браузері телефону.
+- Поле для порогу автоматичного "улюблення" послідовностей — число, скільки разів треба відтворити послідовність, щоб вона автоматично отримала позначку улюбленої (за замовчуванням 5). Кнопка "Зберегти" зберігає нове значення.
+- **Кольорове кодування карток за типом слова**:
+  - Перемикач "Увімкнено" / "Вимкнено" (за замовчуванням вимкнено — підходить не всім дітям, тому це свідомий вибір дорослого).
+  - Коли ввімкнено — короткий пояснювальний текст і для кожного з 5 типів слова (Людина/Дія/Предмет/Ознака/Соціальна фраза) ряд кольорових зразків на вибір (не довільний колір — підібраний набір, який гарантовано добре читається на картках).
+  - Кнопка "Скинути кольори до типових".
 
-#### Панель послідовностей (кнопка ⭐ на головному екрані)
+#### Панель послідовностей (кнопка із зіркою на головному екрані)
 
 - Список збережених послідовностей (назва — це або власна назва, або перелічені через " • " слова карток); зверху завжди йдуть улюблені.
 - Дотик на назву послідовності — **відтворює** її: картки завантажуються в стрічку речення і програються по черзі, лічильник використання послідовності збільшується (після досягнення порогу з Налаштувань послідовність автоматично стає улюбленою).
-- **⭐ / ☆** — вручну позначити/зняти позначку "улюблена" (ручне зняття позначки має пріоритет над автоматичною логікою).
-- **✏️** — відкриває редактор послідовності (див. нижче).
-- **🗑** — видаляє послідовність повністю (без підтвердження).
+- Кнопка-зірка — вручну позначити/зняти позначку "улюблена" (ручне зняття позначки має пріоритет над автоматичною логікою).
+- Кнопка-олівець — відкриває редактор послідовності (див. нижче).
+- Кнопка-кошик — видаляє послідовність повністю (без підтвердження).
 
 #### Редактор послідовності
 
 - Список карток послідовності з мініатюрами.
-- **⠿** (ручка зліва від картки) — затиснути та перетягнути картку вгору/вниз, щоб змінити порядок відтворення.
-- **✕** праворуч від картки — видаляє цю картку з послідовності (сама картка в застосунку не видаляється, лише прибирається з цієї послідовності).
+- Ручка зліва від картки — затиснути та перетягнути картку вгору/вниз, щоб змінити порядок відтворення.
+- Кнопка закриття праворуч від картки — видаляє цю картку з послідовності (сама картка в застосунку не видаляється, лише прибирається з цієї послідовності).
 - **Скасувати** — закрити редактор без збереження змін.
-- **💾 Зберегти** — застосувати нові порядок/склад карток; якщо видалити всі картки й зберегти, послідовність буде видалено повністю.
+- **Зберегти** — застосувати нові порядок/склад карток; якщо видалити всі картки й зберегти, послідовність буде видалено повністю.
 
 ### Встановлення APK (застосунок не публікується в Google Play)
 
@@ -96,10 +107,14 @@ APK збирається автоматично при кожному реліз
 
 Це підписана release-збірка (власним ключем, не через Google Play), тому Android все одно може показати попередження про "невідомого розробника" — це очікувано для застосунків поза Google Play, і не означає, що збірку не підписано.
 
+Якщо в застосунку з'явиться сповіщення "Доступна нова версія" (див. панель дорослого → Налаштування), кнопка "Завантажити оновлення" відкриє сторінку релізу в системному браузері телефону — далі ті самі кроки 2-5 вище.
+
 ### Технології
 
 - Vue 3 + TypeScript + Vite
-- Capacitor (нативна обгортка для Android): SQLite, Filesystem, Camera, Preferences, запис голосу
+- Tailwind CSS v4 (уся кольорова палітра й типографіка задані в одному конфігураційному блоці) + шрифт PT Sans (підтримує кирилицю) + іконки `@mdi/js`
+- Capacitor (нативна обгортка для Android): SQLite, Filesystem, Camera, Preferences, запис голосу, системний браузер (для завантаження оновлень)
+- Перевірка оновлень — публічний GitHub Releases API (без авторизації, раз на запуск застосунку)
 - GitHub Actions збирає підписаний release APK автоматично при публікації релізу на GitHub
 
 ### Структура репозиторію
@@ -124,6 +139,8 @@ npx cap sync android   # синхронізація в нативний Android-
 npx cap open android   # відкрити в Android Studio
 ```
 
+Щоб перевірити поточний код на телефоні без збірки APK: `npm run dev -- --host`, і на телефоні (в тій самій Wi-Fi мережі) відкрити `http://<IP-адреса комп'ютера в мережі>:5173/` у браузері. У цьому режимі нативні можливості (SQLite, камера, мікрофон, TTS) працюють через веб-фолбеки, а не через нативні Android-плагіни — інтерфейс і логіка ідентичні, деякі деталі (якість TTS-голосу, системні діалоги дозволів) можуть відрізнятися від справжньої збірки.
+
 ---
 
 ## EN
@@ -133,29 +150,35 @@ A mobile app for children who experience communication difficulties, that helps 
 ### What's inside
 
 - **Communication cards**: a photo of an object/action + a word, spoken in an adult's recorded voice
-- **Sentence strip**: tap cards to build a sequence, play the whole "sentence" with one button, clear it
+- **Sentence strip**: tap cards to build a sequence, play the whole "sentence" with one button, pause/resume from any card, clear it
 - **Sequences**: save the current strip as a reusable sequence for replay; mark favorites manually, or automatically after N replays (threshold is configurable)
-- **Parent panel** (behind a 4-digit PIN, long-press the ⚙️ icon):
-  - Add card: photo via camera or gallery, voice via native recorder or uploaded audio file
-  - Manage cards: edit, delete, replace just the photo or just the voice without recreating the card
+- **Category color coding** (optional, off by default): tag cards by word type using a scheme similar to what speech therapists often use — details below
+- **Update notifications**: the app checks for a newer release and offers to download it when one's available
+- **Parent panel** (behind a 4-digit PIN, long-press the gear icon):
+  - Add card: photo via camera or gallery, voice via native recorder or uploaded audio file, optional word type for color coding
+  - Manage cards: edit, delete, replace just the photo or just the voice without recreating the card, tag/retag a card's word type after the fact, filter by word type
   - Dashboard: most-tapped words, last 20 played sentences
-  - Settings: auto-favorite threshold for sequences
+  - Settings: auto-favorite threshold for sequences, enabling and customizing category color coding
 - All data and media (photos/audio) live on-device — SQLite for records, separate files for photos and audio. No cloud sync.
 
 ### How to use the app
 
 #### Main screen (for the child)
 
-- **Top bar**: "👋 Розкажи" title on the left; on the right, a **⭐** button (opens saved sequences) and a **⚙️** gear button (long-press ~0.7s opens the parent panel behind a PIN; a short tap does nothing).
-- **Sentence strip** (white bar under the top bar): shows a "Tap a card to start" hint when empty. Three round buttons on the right of the strip:
-  - **💾** — save the current strip as a reusable sequence (disabled while the strip is empty).
-  - **▶** — play the whole strip in order (each card's voice plays with a short pause between them); after playback the sentence is logged for the dashboard (disabled while empty).
-  - **🗑** — clear the strip (disabled while empty).
-- **Card grid** (main area): tapping a card adds it to the strip, immediately plays its voice (recorded or synthesized), and increments that card's tap counter by 1. An empty grid shows a hint to ask an adult to add cards.
+- **Top bar**: "Розкажи" title on the left; on the right, a star button (opens saved sequences) and a gear button (long-press ~0.7s opens the parent panel behind a PIN; a short tap does nothing). If a newer app version is available, a small red dot appears on the gear — it's purely informational, not a separate tap target; the actual download action lives in the parent panel's Settings tab.
+- **Sentence strip and playback controls** — unified into one panel under the top bar. An empty strip shows a centered "Tap a card to start" hint. Three buttons under the strip:
+  - **Save icon (left)** — save the current strip as a reusable sequence (disabled while the strip is empty).
+  - **Big round button (center)** — play the whole strip in order; the same button becomes a pause button during playback. The card currently sounding is highlighted with a yellow outline and auto-scrolled into view if the strip doesn't fully fit. After full playback the sentence is logged for the dashboard. While paused, tap any card in the strip to resume playback from that one.
+  - **Trash icon (right)** — clear the strip (disabled while empty; also stops playback if it's running).
+- **Card grid** (main area):
+  - If category color coding is enabled (see Settings), a row of colored filter chips appears above the grid — "All" (resets the filter) plus one chip per word type (Person/Verb/Noun/Descriptor/Social). Tap a color to show only cards of that type; tap "All" to see every card again.
+  - Tapping a card adds it to the strip, immediately plays its voice (recorded or synthesized), and increments that card's tap counter by 1.
+  - Cards with a word type assigned show a solid color behind their title (matching the type's color) with an automatically-chosen contrasting text color, so the label always stays easy to read.
+  - An empty grid shows a hint to ask an adult to add cards.
 
 #### PIN screen (parent panel access)
 
-- Opened by long-pressing **⚙️**.
+- Opened by long-pressing the gear icon.
 - **First time**: prompts you to create a 4-digit PIN — enter 4 digits on the number pad; they're saved immediately (as a hash) and the parent panel opens.
 - **Every time after**: enter the same PIN. A wrong code shows "Wrong PIN" and clears the entry.
 - **⌫** on the keypad deletes the last digit.
@@ -163,52 +186,57 @@ A mobile app for children who experience communication difficulties, that helps 
 
 #### Parent panel
 
-Four tabs at the top (**➕ Add**, **🗂 Cards**, **📊 Dashboard**, **⚙️**) and a **✕** button to close the whole panel.
+Now opens **full-screen** (rather than a popup sheet from the bottom). Four tabs at the top (Add, Cards, Dashboard, Settings) and a close button next to the title — it scrolls away with the tab's content rather than staying pinned. If a newer app version is available, the same small red dot appears on the Settings tab as on the main screen's gear icon.
 
-**➕ Add tab** (create a new card, or edit an existing one):
+**"Add" tab** (create a new card, or edit an existing one):
 
-- **Photo**: preview area (shows "No photo" until one is picked).
-  - **📷 Camera** — opens the device camera to take a photo.
-  - **🖼 Gallery** — pick an existing image from the phone's gallery.
+- **Photo**: preview area ("No photo" until one is picked).
+  - **Camera** — opens the device camera to take a photo.
+  - **Gallery** — pick an existing image from the phone's gallery.
 - **Word or phrase**: text field for the card's label (required; this exact text is spoken via text-to-speech if no recording is provided).
-- **🔊 Listen to how the card will sound**: plays the current recording if one exists, or the synthesized voice for the typed word — lets you check it before saving.
+- **Word type** (appears only when category color coding is enabled in Settings): a row of colored buttons — Person, Verb, Noun, Descriptor, Social — plus a "No category" option. The chosen type determines the card's color in the grid.
+- **"Listen to how the card will sound"**: plays the current recording if one exists, or the synthesized voice for the typed word — lets you check it before saving.
 - **Adult's voice**:
-  - **🎙 Record / ⏹ Stop recording** — tap to start recording via the microphone (the app requests microphone permission the first time); tap again (button turns red, label changes to "Stop recording") to stop and save the recording.
-  - **📁 File** — pick an existing audio file from the device instead of recording.
+  - **Record / Stop recording** — tap to start recording via the microphone (the app requests microphone permission the first time); tap again to stop and save the recording.
+  - **File** — pick an existing audio file from the device instead of recording.
   - Once recorded/picked, a normal audio player appears for playback.
-- **💾 Save card** (or **💾 Save changes** in edit mode): saves the card. A new card requires a word and a photo; voice is optional (falls back to text-to-speech). In edit mode you can change just the photo, just the voice, or just the text — untouched fields are left alone.
+- **Save card** (or **Save changes** in edit mode): saves the card. A new card requires a word and a photo; voice and word type are optional. In edit mode you can change just the photo, just the voice, just the text, or just the word type — untouched fields are left alone.
 
-**🗂 Cards tab** (manage existing cards):
+**"Cards" tab** (manage existing cards):
 
-- List of all cards with thumbnail and title.
-- **✏️** — opens the card in the Add tab for editing (photo, voice, or text can each be replaced independently, without recreating the card).
-- **🗑** — deletes the card (with a confirmation dialog); its photo and audio files are deleted too.
+- If category color coding is enabled, the same colored filter row from the main screen appears above the list, and the list separately says "No cards of this type" when the filter matches nothing (as opposed to "No cards yet" when there are none at all).
+- List of all (or filtered) cards with thumbnail and title, an edit button (pencil) and a delete button (trash, with a confirmation dialog — its photo and audio files are deleted too).
+- If category color coding is enabled — under each card: a hairline divider, a short caption with that card's current word type (or "No category"), and a row of small colored dots. Tap a dot to assign or change that card's word type right there, without opening the edit tab — this is the main way to retroactively tag existing cards after turning the feature on.
 
-**📊 Dashboard tab** (stats):
+**"Dashboard" tab** (stats):
 
 - **Most-used words**: cards sorted by tap count (count shown to the right of each word).
 - **Recent sentences**: the last 20 sentences played from the strip, with timestamp and words joined by " • ".
 
-**⚙️ Settings tab**:
+**"Settings" tab**:
 
-- A number field for the sequence auto-favorite threshold — how many replays before a sequence automatically gets the ⭐ mark (default 5).
-- **💾 Save** — saves the new threshold value.
+- If a newer app version is available, a prominent red banner appears at the top: "A new version is available X.Y.Z — tap to update." Tapping it opens a dialog with the version info and a "Download update" button, which opens the release page in the phone's system browser.
+- A number field for the sequence auto-favorite threshold — how many replays before a sequence automatically gets marked favorite (default 5). A "Save" button saves the new value.
+- **Category color coding**:
+  - An "Enabled" / "Disabled" toggle (off by default — it doesn't suit every child, so it's a deliberate opt-in for the adult).
+  - When enabled — a short explanation, and for each of the 5 word types (Person/Verb/Noun/Descriptor/Social) a row of preset color swatches to choose from (not a free-form color picker — a curated set guaranteed to stay legible on cards).
+  - A "Reset colors to default" button.
 
-#### Sequences panel (⭐ button on the main screen)
+#### Sequences panel (star button on the main screen)
 
 - List of saved sequences (the name is either a custom name or the joined titles of its cards, separated by " • "); favorites are always listed first.
 - Tapping a sequence's name **replays** it: its cards load into the sentence strip and play in order, and the sequence's usage count increases (once the Settings threshold is reached, it's marked favorite automatically).
-- **⭐ / ☆** — manually mark/unmark as favorite (a manual unmark takes priority over the automatic logic).
-- **✏️** — opens the sequence editor (below).
-- **🗑** — deletes the sequence entirely (no confirmation).
+- Star button — manually mark/unmark as favorite (a manual unmark takes priority over the automatic logic).
+- Pencil button — opens the sequence editor (below).
+- Trash button — deletes the sequence entirely (no confirmation).
 
 #### Sequence editor
 
 - List of the sequence's cards with thumbnails.
-- **⠿** (handle on the left of each card) — press and drag up/down to reorder playback.
-- **✕** on the right of each card — removes that card from the sequence (the card itself is not deleted from the app, just from this sequence).
+- Handle on the left of each card — press and drag up/down to reorder playback.
+- Close button on the right of each card — removes that card from the sequence (the card itself is not deleted from the app, just from this sequence).
 - **Cancel** — close the editor without saving changes.
-- **💾 Save** — apply the new order/set of cards; if you remove every card and save, the sequence is deleted entirely.
+- **Save** — apply the new order/set of cards; if you remove every card and save, the sequence is deleted entirely.
 
 ### Installing the APK (the app is not on Google Play)
 
@@ -222,10 +250,14 @@ The APK is built automatically on every GitHub release (see the **Releases** tab
 
 This is a release build signed with our own key (not through Google Play), so Android may still show an "unknown developer" warning — expected for apps distributed outside Google Play, and doesn't mean the build is unsigned.
 
+If the app shows an "Update available" notice (parent panel → Settings), tapping "Download update" opens the release page in the phone's system browser — then follow steps 2-5 above.
+
 ### Tech stack
 
 - Vue 3 + TypeScript + Vite
-- Capacitor (native Android wrapper): SQLite, Filesystem, Camera, Preferences, voice recording
+- Tailwind CSS v4 (the whole color palette and type scale live in one config block) + PT Sans (Cyrillic-supporting) + `@mdi/js` icons
+- Capacitor (native Android wrapper): SQLite, Filesystem, Camera, Preferences, voice recording, system browser (for opening update downloads)
+- Update checks use the public GitHub Releases API (no auth needed, once per app launch)
 - GitHub Actions builds a signed release APK automatically whenever a GitHub release is published
 
 ### Repository layout
@@ -249,6 +281,8 @@ npm run build         # build + typecheck
 npx cap sync android   # sync into the native Android project
 npx cap open android   # open in Android Studio
 ```
+
+To check the current code on your phone without building an APK: `npm run dev -- --host`, then on your phone (same Wi-Fi network) open `http://<your computer's LAN IP>:5173/` in a browser. In this mode native capabilities (SQLite, camera, mic, TTS) run through web fallbacks instead of native Android plugins — the UI and logic are identical, but some details (TTS voice quality, system permission dialogs) will differ from a real build.
 
 ### Signing a release build
 
