@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { mdiCog } from "@mdi/js";
-import type { Card } from "../types/card";
+import type { Card, CardCategory } from "../types/card";
 import CardTile from "./CardTile.vue";
 import MdiIcon from "./shared/MdiIcon.vue";
+import CategoryFilterRow from "./shared/CategoryFilterRow.vue";
+import { useCardCategories } from "../composables/useCardCategories";
 
-defineProps<{ cards: Card[] }>();
+const props = defineProps<{ cards: Card[] }>();
 const emit = defineEmits<{
   (e: "tap", card: Card): void;
   (e: "compact", value: boolean): void;
 }>();
+
+const { coloringEnabled, categoryColors } = useCardCategories();
+const categoryFilter = ref<CardCategory | null>(null);
+
+const visibleCards = computed(() => {
+  if (!categoryFilter.value) return props.cards;
+  return props.cards.filter((c) => c.category === categoryFilter.value);
+});
 
 const isCompact = ref(false);
 const EXPAND_THRESHOLD = 6;
@@ -29,13 +39,21 @@ function onScroll(e: Event) {
 
 <template>
   <main @scroll="onScroll">
-    <div v-if="cards.length" id="grid">
+    <CategoryFilterRow
+      v-if="coloringEnabled && cards.length"
+      v-model="categoryFilter"
+      :colors="categoryColors"
+    />
+    <div v-if="visibleCards.length" id="grid">
       <CardTile
-        v-for="card in cards"
+        v-for="card in visibleCards"
         :key="card.id"
         :card="card"
         @tap="(c) => emit('tap', c)"
       />
+    </div>
+    <div v-else-if="cards.length" id="emptyState">
+      Немає карток цього типу.
     </div>
     <div v-else id="emptyState">
       Поки немає жодної картки.<br />

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
+import { computed, onMounted, ref, watchEffect } from "vue";
 import { mdiPencil, mdiTrashCan } from "@mdi/js";
 import { useCards } from "../../composables/useCards";
 import { resolveMediaUrl } from "../../composables/mediaUrl";
@@ -10,6 +10,7 @@ import {
 } from "../../composables/useCardCategories";
 import MdiIcon from "../shared/MdiIcon.vue";
 import CategoryPicker from "../shared/CategoryPicker.vue";
+import CategoryFilterRow from "../shared/CategoryFilterRow.vue";
 import type { Card, CardCategory } from "../../types/card";
 
 const emit = defineEmits<{ (e: "edit", card: Card): void }>();
@@ -18,6 +19,12 @@ const { cards, refresh, deleteCard, updateCardCategory } = useCards();
 const store = useAppStore();
 const { coloringEnabled, categoryColors } = useCardCategories();
 const thumbUrls = ref<Record<number, string | null>>({});
+const categoryFilter = ref<CardCategory | null>(null);
+
+const visibleCards = computed(() => {
+  if (!categoryFilter.value) return cards.value;
+  return cards.value.filter((c) => c.category === categoryFilter.value);
+});
 
 onMounted(refresh);
 
@@ -41,8 +48,14 @@ async function onDelete(card: Card) {
 
 <template>
   <div>
+    <CategoryFilterRow
+      v-if="coloringEnabled && cards.length"
+      v-model="categoryFilter"
+      :colors="categoryColors"
+    />
     <p v-if="cards.length === 0" class="empty">Ще немає карток.</p>
-    <div v-for="card in cards" :key="card.id" class="card-list-item">
+    <p v-else-if="visibleCards.length === 0" class="empty">Немає карток цього типу.</p>
+    <div v-for="card in visibleCards" :key="card.id" class="card-list-item">
       <div class="row-top">
         <img v-if="thumbUrls[card.id]" :src="thumbUrls[card.id]!" />
         <div class="word">{{ card.title }}</div>

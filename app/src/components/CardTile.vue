@@ -2,7 +2,7 @@
 import { computed, ref, watchEffect } from "vue";
 import type { Card } from "../types/card";
 import { resolveMediaUrl } from "../composables/mediaUrl";
-import { useCardCategories } from "../composables/useCardCategories";
+import { getContrastTextColor, useCardCategories } from "../composables/useCardCategories";
 
 const props = defineProps<{ card: Card }>();
 const emit = defineEmits<{ (e: "tap", card: Card): void }>();
@@ -15,6 +15,12 @@ const glow = ref(false);
 const categoryColor = computed(() => {
   if (!coloringEnabled.value || !props.card.category) return null;
   return categoryColors.value[props.card.category];
+});
+
+const labelStyle = computed(() => {
+  const bg = categoryColor.value;
+  if (!bg) return undefined;
+  return { background: bg, color: getContrastTextColor(bg) };
 });
 
 watchEffect(async () => {
@@ -37,7 +43,9 @@ function onTap() {
     />
     <img v-if="imageUrl" class="thumb" :src="imageUrl" :alt="card.title" />
     <div v-else class="thumb thumb-placeholder"></div>
-    <div class="label">{{ card.title }}</div>
+    <div class="label" :style="labelStyle">
+      {{ card.title }}
+    </div>
   </button>
 </template>
 
