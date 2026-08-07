@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { mdiCog, mdiStar } from "@mdi/js";
+import MdiIcon from "./shared/MdiIcon.vue";
+
 let pressTimer: ReturnType<typeof setTimeout> | null = null;
 
 const emit = defineEmits<{
@@ -17,14 +20,14 @@ function cancel() {
 
 <template>
   <header>
-    <h1>👋 Розкажи</h1>
+    <h1>Розкажи</h1>
     <div class="header-actions">
       <button
         id="sequencesBtn"
         aria-label="Збережені послідовності"
         @click="emit('openSequences')"
       >
-        ⭐
+        <MdiIcon :path="mdiStar" :size="22" />
       </button>
       <button
         id="gearBtn"
@@ -37,7 +40,7 @@ function cancel() {
         @touchend="cancel"
         @touchcancel="cancel"
       >
-        ⚙️
+        <MdiIcon :path="mdiCog" :size="22" />
       </button>
     </div>
   </header>

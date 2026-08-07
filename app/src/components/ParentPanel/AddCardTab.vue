@@ -1,5 +1,15 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from "vue";
+import {
+  mdiCamera,
+  mdiContentSave,
+  mdiFile,
+  mdiImage,
+  mdiMicrophone,
+  mdiStop,
+  mdiVolumeHigh,
+} from "@mdi/js";
+import MdiIcon from "../shared/MdiIcon.vue";
 import type { Card } from "../../types/card";
 import { useCards } from "../../composables/useCards";
 import { useCamera } from "../../composables/useCamera";
@@ -76,12 +86,12 @@ async function onToggleRecord() {
       pendingAudioPath.value = path;
       audioDirty.value = true;
       audioPreviewUrl.value = await resolveMediaUrl(path);
-      recStatus.value = "Запис збережено ✓";
+      recStatus.value = "Запис збережено";
     }
     return;
   }
   const ok = await start();
-  recStatus.value = ok ? "Йде запис… 🔴" : "Немає доступу до мікрофона";
+  recStatus.value = ok ? "Йде запис…" : "Немає доступу до мікрофона";
 }
 
 function onChooseAudioFile() {
@@ -96,7 +106,7 @@ async function onAudioFileSelected(e: Event) {
   pendingAudioPath.value = path;
   audioDirty.value = true;
   audioPreviewUrl.value = await resolveMediaUrl(path);
-  recStatus.value = "Аудіофайл додано ✓";
+  recStatus.value = "Аудіофайл додано";
 }
 
 async function onTestVoice() {
@@ -143,7 +153,7 @@ async function onSave() {
     if (audioDirty.value) {
       await updateCardAudio(id, pendingAudioPath.value);
     }
-    store.showToast("Картку оновлено ✓");
+    store.showToast("Картку оновлено");
   } else {
     if (!pendingImagePath.value) {
       store.showToast("Додайте фото");
@@ -154,7 +164,7 @@ async function onSave() {
       imagePath: pendingImagePath.value,
       audioPath: pendingAudioPath.value,
     });
-    store.showToast("Картку додано ✓");
+    store.showToast("Картку додано");
   }
   resetForm();
   emit("saved");
@@ -169,8 +179,14 @@ async function onSave() {
       <span v-else>Немає фото</span>
     </div>
     <div class="row" style="margin-top: 10px">
-      <button class="btn btn-secondary" @click="onTakePhoto">📷 Камера</button>
-      <button class="btn btn-secondary" @click="onPickPhoto">🖼 Галерея</button>
+      <button class="btn btn-secondary" @click="onTakePhoto">
+        <MdiIcon :path="mdiCamera" :size="18" />
+        Камера
+      </button>
+      <button class="btn btn-secondary" @click="onPickPhoto">
+        <MdiIcon :path="mdiImage" :size="18" />
+        Галерея
+      </button>
     </div>
 
     <label class="field-label">Слово або фраза</label>
@@ -181,7 +197,8 @@ async function onSave() {
       <span class="hint">(якщо не записати — картка говоритиме синтезованим голосом)</span>
     </label>
     <button class="btn btn-secondary btn-block" style="margin-bottom: 10px" @click="onTestVoice">
-      🔊 Прослухати, як говоритиме картка
+      <MdiIcon :path="mdiVolumeHigh" :size="18" />
+      Прослухати, як говоритиме картка
     </button>
     <div class="row">
       <button
@@ -189,9 +206,13 @@ async function onSave() {
         :class="{ recording: isRecording }"
         @click="onToggleRecord"
       >
-        {{ isRecording ? "⏹ Зупинити запис" : "🎙 Записати" }}
+        <MdiIcon :path="isRecording ? mdiStop : mdiMicrophone" :size="18" />
+        {{ isRecording ? "Зупинити запис" : "Записати" }}
       </button>
-      <button class="btn btn-secondary" @click="onChooseAudioFile">📁 Файл</button>
+      <button class="btn btn-secondary" @click="onChooseAudioFile">
+        <MdiIcon :path="mdiFile" :size="18" />
+        Файл
+      </button>
     </div>
     <input
       ref="audioFileInput"
@@ -204,7 +225,8 @@ async function onSave() {
     <audio v-if="audioPreviewUrl" :src="audioPreviewUrl" controls style="width: 100%; margin-top: 8px" />
 
     <button class="btn btn-primary" @click="onSave">
-      {{ editingCard ? "💾 Зберегти зміни" : "💾 Зберегти картку" }}
+      <MdiIcon :path="mdiContentSave" :size="18" />
+      {{ editingCard ? "Зберегти зміни" : "Зберегти картку" }}
     </button>
   </div>
 </template>

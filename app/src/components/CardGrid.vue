@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { mdiCog } from "@mdi/js";
 import type { Card } from "../types/card";
 import CardTile from "./CardTile.vue";
+import MdiIcon from "./shared/MdiIcon.vue";
 
 defineProps<{ cards: Card[] }>();
 const emit = defineEmits<{
@@ -37,7 +39,9 @@ function onScroll(e: Event) {
     </div>
     <div v-else id="emptyState">
       Поки немає жодної картки.<br />
-      Дорослий може додати їх, довго натиснувши ⚙️ у верхньому кутку.
+      Дорослий може додати їх, довго натиснувши
+      <MdiIcon :path="mdiCog" :size="16" />
+      у верхньому кутку.
     </div>
   </main>
 </template>

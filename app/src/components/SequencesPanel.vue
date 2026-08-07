@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { mdiClose, mdiPencil, mdiStar, mdiStarOutline, mdiTrashCan } from "@mdi/js";
 import { useSequences } from "../composables/useSequences";
 import { useCards } from "../composables/useCards";
 import SequenceEditor from "./SequenceEditor.vue";
+import MdiIcon from "./shared/MdiIcon.vue";
 import type { Sequence } from "../types/card";
 
 const emit = defineEmits<{
@@ -38,7 +40,9 @@ function onEditSaved() {
 <template>
   <div class="overlay">
     <div class="sheet">
-      <button class="sheet-close" @click="emit('close')">✕</button>
+      <button class="sheet-close" @click="emit('close')">
+        <MdiIcon :path="mdiClose" :size="22" />
+      </button>
       <h2>Послідовності</h2>
       <div v-if="sequences.length === 0" class="empty">
         Ще немає збережених послідовностей.
@@ -53,10 +57,14 @@ function onEditSaved() {
           :class="{ active: seq.isFavorite }"
           @click="toggleFavorite(seq.id, !seq.isFavorite)"
         >
-          {{ seq.isFavorite ? "⭐" : "☆" }}
+          <MdiIcon :path="seq.isFavorite ? mdiStar : mdiStarOutline" :size="18" />
         </button>
-        <button class="icon-btn" @click="editingSequence = seq">✏️</button>
-        <button class="icon-btn" @click="remove(seq.id)">🗑</button>
+        <button class="icon-btn" @click="editingSequence = seq">
+          <MdiIcon :path="mdiPencil" :size="18" />
+        </button>
+        <button class="icon-btn" @click="remove(seq.id)">
+          <MdiIcon :path="mdiTrashCan" :size="18" />
+        </button>
       </div>
     </div>
 
@@ -94,9 +102,11 @@ function onEditSaved() {
   float: right;
   background: none;
   border: none;
-  font-size: 26px;
   color: var(--gray);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .empty {
   color: var(--gray);
@@ -136,9 +146,11 @@ function onEditSaved() {
   border-radius: 50%;
   border: none;
   background: #f2f2f2;
-  font-size: 18px;
   flex-shrink: 0;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .icon-btn.active {
   background: var(--yellow);
