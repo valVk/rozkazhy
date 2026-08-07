@@ -7,12 +7,14 @@ import CardGrid from "./components/CardGrid.vue";
 import PinLockScreen from "./components/PinLockScreen.vue";
 import SequencesPanel from "./components/SequencesPanel.vue";
 import ParentPanel from "./components/ParentPanel/ParentPanel.vue";
+import UpdateModal from "./components/UpdateModal.vue";
 import ShToast from "./components/shared/Toast.vue";
 import { useAppStore } from "./stores/appStore";
 import { useCards } from "./composables/useCards";
 import { useSequences } from "./composables/useSequences";
 import { usePlaybackController } from "./composables/usePlaybackController";
 import { useAudioPlayback } from "./composables/useAudioPlayback";
+import { useUpdateCheck } from "./composables/useUpdateCheck";
 import type { Card } from "./types/card";
 
 const store = useAppStore();
@@ -20,11 +22,14 @@ const { cards, refresh, incrementTapCount } = useCards();
 const { saveCurrent } = useSequences();
 const playback = usePlaybackController();
 const { playCardAudio } = useAudioPlayback();
+const { updateAvailable, checkForUpdate } = useUpdateCheck();
 
 const pinScreenVisible = ref(false);
 const isCompact = ref(false);
+const updateModalOpen = ref(false);
 
 onMounted(refresh);
+onMounted(checkForUpdate);
 
 // If a card currently in the sentence gets deleted (e.g. via the parent
 // panel) while it's mid-playback, the playback loop would keep running
@@ -92,11 +97,20 @@ function onPinUnlocked() {
 function onPinCancel() {
   pinScreenVisible.value = false;
 }
+
+function onOpenUpdate() {
+  updateModalOpen.value = true;
+}
 </script>
 
 <template>
   <div id="app">
-    <AppHeader @open-parent="onOpenParent" @open-sequences="onOpenSequences" />
+    <AppHeader
+      :update-available="updateAvailable"
+      @open-parent="onOpenParent"
+      @open-sequences="onOpenSequences"
+      @open-update="onOpenUpdate"
+    />
     <SentenceStrip
       :cards="store.sentence"
       :compact="isCompact"
@@ -131,6 +145,7 @@ function onPinCancel() {
       @close="store.sequencesPanelOpen = false"
       @replay="onReplaySequence"
     />
+    <UpdateModal v-if="updateModalOpen" @close="updateModalOpen = false" />
     <ShToast />
   </div>
 </template>

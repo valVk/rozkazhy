@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { mdiCog, mdiStar } from "@mdi/js";
+import { mdiAlertCircle, mdiCog, mdiStar } from "@mdi/js";
 import MdiIcon from "./shared/MdiIcon.vue";
+
+defineProps<{ updateAvailable: boolean }>();
 
 let pressTimer: ReturnType<typeof setTimeout> | null = null;
 
 const emit = defineEmits<{
   (e: "openParent"): void;
   (e: "openSequences"): void;
+  (e: "openUpdate"): void;
 }>();
 
 function start(e: Event) {
@@ -29,19 +32,29 @@ function cancel() {
       >
         <MdiIcon :path="mdiStar" :size="22" />
       </button>
-      <button
-        id="gearBtn"
-        aria-label="Налаштування (для дорослих)"
-        @mousedown="start"
-        @touchstart.passive="start"
-        @contextmenu.prevent
-        @mouseup="cancel"
-        @mouseleave="cancel"
-        @touchend="cancel"
-        @touchcancel="cancel"
-      >
-        <MdiIcon :path="mdiCog" :size="22" />
-      </button>
+      <div class="gear-wrap">
+        <button
+          id="gearBtn"
+          aria-label="Налаштування (для дорослих)"
+          @mousedown="start"
+          @touchstart.passive="start"
+          @contextmenu.prevent
+          @mouseup="cancel"
+          @mouseleave="cancel"
+          @touchend="cancel"
+          @touchcancel="cancel"
+        >
+          <MdiIcon :path="mdiCog" :size="22" />
+        </button>
+        <button
+          v-if="updateAvailable"
+          id="updateBadge"
+          aria-label="Доступна нова версія"
+          @click="emit('openUpdate')"
+        >
+          <MdiIcon :path="mdiAlertCircle" :size="14" />
+        </button>
+      </div>
     </div>
   </header>
 </template>
@@ -81,5 +94,21 @@ header h1 {
   user-select: none;
   touch-action: manipulation;
   cursor: pointer;
+}
+.gear-wrap {
+  position: relative;
+}
+#updateBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: white;
+  border: 2px solid var(--pink);
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 </style>
