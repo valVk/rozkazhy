@@ -6,7 +6,6 @@ import { resolveMediaUrl } from "../../composables/mediaUrl";
 import { useAppStore } from "../../stores/appStore";
 import {
   CATEGORY_LABELS,
-  CATEGORY_ORDER,
   useCardCategories,
 } from "../../composables/useCardCategories";
 import MdiIcon from "../shared/MdiIcon.vue";
@@ -42,12 +41,6 @@ async function onDelete(card: Card) {
 
 <template>
   <div>
-    <div v-if="coloringEnabled" class="category-legend">
-      <span v-for="cat in CATEGORY_ORDER" :key="cat" class="legend-item">
-        <span class="legend-dot" :style="{ background: categoryColors[cat] }" />
-        {{ CATEGORY_LABELS[cat] }}
-      </span>
-    </div>
     <p v-if="cards.length === 0" class="empty">Ще немає карток.</p>
     <div v-for="card in cards" :key="card.id" class="card-list-item">
       <div class="row-top">
@@ -60,14 +53,24 @@ async function onDelete(card: Card) {
           <MdiIcon :path="mdiTrashCan" :size="18" />
         </button>
       </div>
-      <CategoryPicker
-        v-if="coloringEnabled"
-        class="row-category"
-        compact
-        :model-value="card.category"
-        :colors="categoryColors"
-        @update:model-value="(cat) => onCategoryChange(card, cat)"
-      />
+      <template v-if="coloringEnabled">
+        <div class="row-divider" />
+        <div class="category-hint">
+          <span
+            v-if="card.category"
+            class="legend-dot"
+            :style="{ background: categoryColors[card.category] }"
+          />
+          {{ card.category ? CATEGORY_LABELS[card.category] : "Без категорії" }}
+        </div>
+        <CategoryPicker
+          class="row-category"
+          compact
+          :model-value="card.category"
+          :colors="categoryColors"
+          @update:model-value="(cat) => onCategoryChange(card, cat)"
+        />
+      </template>
     </div>
   </div>
 </template>
@@ -87,25 +90,20 @@ async function onDelete(card: Card) {
   align-items: center;
   gap: 12px;
 }
-.row-category {
+.row-divider {
   margin-top: 10px;
-  padding-top: 8px;
-  padding-left: 68px;
-  border-top: 1px solid rgba(43, 42, 51, 0.06);
+  border-top: 1px solid rgba(43, 42, 51, 0.08);
 }
-.category-legend {
+.category-hint {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-bottom: 12px;
-  padding: 8px 10px;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
   color: var(--mist);
   font-size: 12px;
 }
-.legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+.row-category {
+  margin-top: 8px;
 }
 .legend-dot {
   width: 10px;
