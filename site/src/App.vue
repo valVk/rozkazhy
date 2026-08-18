@@ -5,6 +5,7 @@ import HowItWorks from "./components/HowItWorks.vue";
 import CategoryColors from "./components/CategoryColors.vue";
 import PrivacySection from "./components/PrivacySection.vue";
 import InstallSection from "./components/InstallSection.vue";
+import Instructions from "./components/Instructions.vue";
 import TheFooter from "./components/TheFooter.vue";
 </script>
 
@@ -17,6 +18,7 @@ import TheFooter from "./components/TheFooter.vue";
       <CategoryColors />
       <PrivacySection />
       <InstallSection />
+      <Instructions />
     </main>
     <TheFooter />
   </div>

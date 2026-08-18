@@ -6,4 +6,9 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   base: '/rozkazhy/',
   plugins: [vue(), tailwindcss()],
+  server: {
+    // Instructions.vue imports the repo-root README.md (outside site/) as
+    // the single source of truth for install/usage copy.
+    fs: { allow: ['..'] },
+  },
 })
