@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import "@fontsource/pt-sans/400.css";
+@import "@fontsource/pt-sans/700.css";
+
+@theme {
+  --color-paper: #FBF8F3;
+  --color-ink: #2B2A33;
+  --color-mist: #6B6B78;
+  --color-bloom: #C34B6B;
+  --color-sky: #357888;
+  --color-sun: #F6B93B;
+  --color-moss: #4F7A4A;
+  --color-signal: #B84A4A;
+
+  --color-cat-person: #E0A526;
+  --color-cat-verb: #43763F;
+  --color-cat-noun: #D97B3D;
+  --color-cat-descriptor: #377196;
+  --color-cat-social: #BA3E5F;
+
+  --color-label-light: #F3EFE7;
+  --color-label-dark: #2B2A33;
+
+  --font-sans: "PT Sans", -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-sun);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
