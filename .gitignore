@@ -2,6 +2,10 @@
 app/node_modules/
 app/dist/
 app/npm-debug.log*
+site/node_modules/
+site/dist/
+site/npm-debug.log*
+site/public/poster.html
 
 # Android build outputs
 app/android/app/build/
