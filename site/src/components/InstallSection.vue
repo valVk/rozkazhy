@@ -4,7 +4,7 @@ import { mdiCellphoneArrowDown } from "@mdi/js";
 import MdiIcon from "./MdiIcon.vue";
 import { useLatestRelease } from "../composables/useLatestRelease";
 
-const { version, apkUrl, releaseUrl, load, REPO_URL } = useLatestRelease();
+const { version, apkUrl, releaseUrl, load } = useLatestRelease();
 onMounted(load);
 
 const steps = [
@@ -45,8 +45,8 @@ const steps = [
         </li>
       </ol>
 
-      <a :href="`${REPO_URL}#readme`" class="mt-6 inline-block text-sm text-sky font-bold underline">
-        Повна інструкція в README →
+      <a href="#instructions" class="mt-6 inline-block text-sm text-sky font-bold underline">
+        Повна інструкція ↓
       </a>
     </div>
   </section>
